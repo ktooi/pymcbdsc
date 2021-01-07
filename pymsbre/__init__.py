@@ -14,21 +14,21 @@ from os import name as os_name
 __version__ = "0.1.0"
 
 
-def download_dir():
-    """ OS 毎のデフォルトのダウンロードディレクトリ(フォルダ)を戻す関数。
+def pymsbre_root_dir():
+    """ pymsbre が利用するディレクトリ(フォルダ)の OS 毎のデフォルトパスを戻す関数。
 
-    The function returns the default download directory each by OS.
+    The function returns the default root directory of pymsbre each by OS.
 
     Returns:
-        str: OS 毎のデフォルトのダウンロードディレクトリ(フォルダ)。
+        str: pymsbre が利用するディレクトリ(フォルダ)の OS 毎のデフォルトパス。
     """
     r = None
     if os_name == 'nt':
-        r = "c:\\pymsbre\\downloads"
+        r = "c:\\pymsbre"
     elif os_name == 'posix':
-        r = "/var/lib/pymsbre/downloads"
+        r = "/var/lib/pymsbre"
     else:
-        r = "/var/lib/pymsbre/downloads"
+        r = "/var/lib/pymsbre"
     return r
 
 
@@ -57,7 +57,7 @@ class MsbreDownloader(object):
     """
 
     def __init__(self,
-                 download_dir: str = download_dir(),
+                 pymsbre_root_dir: str = pymsbre_root_dir(),
                  url: str = "https://www.minecraft.net/en-us/download/server/bedrock/",
                  zip_url_pat: str = ("https:\\/\\/minecraft\\.azureedge\\.net\\/bin-linux\\/"
                                      "bedrock-server-([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)\\.zip"),
@@ -65,7 +65,7 @@ class MsbreDownloader(object):
         """ MsbreDownloader インスタンスの初期化メソッド。
 
         Args:
-            download_dir (str, optional): ダウンロードした Bedrock Server の Zip ファイルを保存するディレクトリ(フォルダ). Defaults to download_dir().
+            pymsbre_root_dir (str, optional): pymsbre が利用するディレクトリ(フォルダ). Defaults to pymsbre_root_dir().
             url (str, optional): Bedrock Server のダウンロードリンクが掲載されているページへの URL.
                                  Defaults to "https://www.minecraft.net/en-us/download/server/bedrock/".
             zip_url_pat (str, optional): `url` に掲載されているダウンロードリンクのパターン.
@@ -73,7 +73,7 @@ class MsbreDownloader(object):
                                                       "bedrock-server-([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)\\.zip").
             agree_to_meula_and_pp (bool, optional): MEULA 及び Privacy Policy に同意するか否か. Defaults to False.
         """
-        self._download_dir = download_dir
+        self._pymsbre_root_dir = pymsbre_root_dir
         self._url = url
         self._zip_url_pat = re.compile(zip_url_pat)
         self._agree_to_meula_and_pp = agree_to_meula_and_pp
@@ -131,6 +131,23 @@ class MsbreDownloader(object):
             self._latest_filename = os.path.basename(zip_url)
         return self._latest_filename
 
+    def download_dir(self, abstruct=False) -> str:
+        """ Bedrock Server の zip ファイルをダウンロードするディレクトリ(フォルダ)を戻すメソッド。
+
+        The method returns the download directory of the Bedrock Server file.
+
+        Args:
+            abstruct (bool, optional): pymsbre_root_dir からの相対パスを戻すか否か。 Defaults to False.
+
+        Returns:
+            str: Bedrock Server の zip ファイルをダウンロードするディレクトリ(フォルダ)。
+        """
+        downloads = "downloads"
+        return downloads if abstruct else os.path.join(self._pymsbre_root_dir, downloads)
+
+    def root_dir(self) -> str:
+        return self._pymsbre_root_dir
+
     def latest_version_zip_filepath(self) -> str:
         """ ローカル上に保存されている(或いは保存するべき)最新の Bedrock Server の zip ファイルパスを戻すメソッド。
 
@@ -141,7 +158,7 @@ class MsbreDownloader(object):
             >>> downloader.latest_filepath()
             '/var/lib/pymsbre/downloads/bedrock-server-1.16.201.02.zip'
         """
-        download_dir = self._download_dir
+        download_dir = self.download_dir()
         latest_filename = self.latest_filename()
         return os.path.join(download_dir, latest_filename)
 

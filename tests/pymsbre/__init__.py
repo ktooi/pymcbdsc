@@ -7,8 +7,8 @@ import os
 
 class TestMsbreDownloader(unittest.TestCase):
 
-    os_name2download_dir = {"posix": "/var/lib/pymsbre/downloads",
-                            "nt": "c:\\pymsbre\\downloads"}
+    os_name2root_dir = {"posix": "/var/lib/pymsbre",
+                        "nt": "c:\\pymsbre"}
 
     def setUp(self) -> None:
         self.patcher_docker = mock.patch('pymsbre.docker')
@@ -21,17 +21,29 @@ class TestMsbreDownloader(unittest.TestCase):
         self.patcher_docker.stop()
         self.patcher_requests.stop()
 
-    def _test_download_dir(self, os_name, exp):
+    def _test_root_dir(self, os_name, exp):
         p = mock.patch('pymsbre.os_name', os_name)
         p.start()
 
-        act = pymsbre.download_dir()
+        act = pymsbre.pymsbre_root_dir()
         self.assertEqual(act, exp)
         p.stop()
 
+    def test_root_dir(self):
+        for (os_name, exp_root_dir) in self.os_name2root_dir.items():
+            self._test_root_dir(os_name, exp_root_dir)
+
     def test_download_dir(self):
-        for (os_name, exp_download_dir) in self.os_name2download_dir.items():
-            self._test_download_dir(os_name, exp_download_dir)
+        msbre = self.msbre
+        root_dir = self.os_name2root_dir[os.name]
+
+        act = msbre.download_dir(relative=False)
+        exp = os.path.join(root_dir, "downloads")
+        self.assertEqual(act, exp)
+
+        act = msbre.download_dir(relative=True)
+        exp = "downloads"
+        self.assertEqual(act, exp)
 
     def _set_dummy_attr(self, msbre=None) -> None:
         if msbre is None:
@@ -77,5 +89,5 @@ class TestMsbreDownloader(unittest.TestCase):
         self._set_dummy_attr(msbre)
 
         act = msbre.latest_version_zip_filepath()
-        exp = os.path.join(self.os_name2download_dir[os.name], "bedrock-server-1.0.0.0.zip")
+        exp = os.path.join(self.os_name2root_dir[os.name], "downloads", "bedrock-server-1.0.0.0.zip")
         self.assertEqual(act, exp)
