@@ -5,6 +5,7 @@ import os.path
 from os import getcwd as os_getcwd
 
 # To can mock the os.name like below line:
+# >>> os_name = "posix"
 # >>> p = mock.patch('pymsbre.os_name', os_name)
 from os import name as os_name
 
@@ -12,7 +13,11 @@ from os import name as os_name
 def download_dir():
     """ OS 毎のデフォルトのダウンロードディレクトリ(フォルダ)を戻す関数。
 
-    The function returns the default download directory each by OS. """
+    The function returns the default download directory each by OS.
+
+    Returns:
+        str: OS 毎のデフォルトのダウンロードディレクトリ(フォルダ)。
+    """
     r = None
     if os_name == 'nt':
         r = "c:\\pymsbre\\downloads"
@@ -24,7 +29,15 @@ def download_dir():
 
 
 class MsbreDownloader(object):
-    """
+    """ Bedrock Server の最新ファイルについてダウンロードし、管理するクラス。
+
+    このクラスを利用するにあたっては、本モジュールのライセンスの他に Minecraft End User License Agreement
+    及び Privacy Policy に同意する必要があります。
+
+    This class is download and manage latest version of the Bedrock Server file.
+
+    You have to agree to the Minecraft End User License Agreement and Privacy Policy to use this module.
+
     Examples:
 
         >>> from pymsbre import MsbreDownloader
@@ -44,7 +57,14 @@ class MsbreDownloader(object):
                  url="https://www.minecraft.net/en-us/download/server/bedrock/",
                  zip_url_pat=("https:\\/\\/minecraft\\.azureedge\\.net\\/bin-linux\\/"
                               "bedrock-server-([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)\\.zip"),
-                 agree_to_meula_and_pp=False):
+        """ MsbreDownloader インスタンスの初期化メソッド。
+
+        Args:
+            download_dir (str, optional): ダウンロードした Bedrock Server の Zip ファイルを保存するディレクトリ(フォルダ). Defaults to download_dir().
+            url (str, optional): Bedrock Server のダウンロードリンクが掲載されているページへの URL. Defaults to "https://www.minecraft.net/en-us/download/server/bedrock/".
+            zip_url_pat (str, optional): `url` に掲載されているダウンロードリンクのパターン. Defaults to ("https:\/\/minecraft\.azureedge\.net\/bin-linux\/" "bedrock-server-([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.zip").
+            agree_to_meula_and_pp (bool, optional): MEULA 及び Privacy Policy に同意するか否か. Defaults to False.
+        """
         self._download_dir = download_dir
         self._url = url
         self._zip_url_pat = re.compile(zip_url_pat)
@@ -130,13 +150,25 @@ class MsbreDownloader(object):
         return os.path.exists(self.latest_version_zip_filepath())
 
     @classmethod
-    def download(cls, url, filepath) -> None:
+        """ `url` で指定されたファイルを、ダウンロードして `filepath` に保存するクラスメソッド。
+
+        Args:
+            url (str): ダウンロードするファイルの URL.
+            filepath (str): ダウンロードしたファイルを保存するファイルパス.
+        """
         res = requests.get(url)
         res.raise_for_status()
         with open(filepath, "wb") as f:
             f.write(res.content)
 
-    def download_latest_version_zip_file(self, agree_to_meula_and_pp=None) -> None:
+        """ Bedrock Server の最新版の Zip ファイルをダウンロードするメソッド。
+
+        Args:
+            agree_to_meula_and_pp (bool, optional): MEULA 及び Privacy Policy に同意するか否か. Defaults to None.
+
+        Raises:
+            ValueError: [description]
+        """
         if agree_to_meula_and_pp is None:
             agree_to_meula_and_pp = self._agree_to_meula_and_pp
         if not agree_to_meula_and_pp:
@@ -145,19 +177,34 @@ class MsbreDownloader(object):
         self.download(url=self.zip_url(),
                       filepath=self.latest_version_zip_filepath())
 
-    def download_latest_version_zip_file_if_needed(self, agree_to_meula_and_pp=None) -> None:
+        """ Bedrock Server の最新版の Zip ファイルがローカルになかった場合にのみ、ダウンロードするメソッド。
+
+        Args:
+            agree_to_meula_and_pp (bool, optional): MEULA 及び Privacy Policy に同意するか否か. Defaults to None.
+        """
         if not self.has_latest_version_zip_file():
             self.download_latest_version_zip_file(agree_to_meula_and_pp=agree_to_meula_and_pp)
 
 
 class MsbreDockerManager(object):
 
-    def __init__(self, docker=docker.from_env(), downloader=MsbreDownloader(), dockerfile=os.path.join(os_getcwd, "Dockerfile"), repository="bedrock"):
-        self._docker = docker
+        """[summary]
+
+        Args:
+            docker_client (DockerClient, optional): [description]. Defaults to None.
+            downloader (MsbreDownloader, optional): [description]. Defaults to MsbreDownloader().
+            dockerfile (str, optional): [description]. Defaults to os.path.join(os_getcwd(), "Dockerfile").
+            repository (str, optional): [description]. Defaults to "bedrock".
+        """
+        self._docker_client = docker.from_env() if docker_client is None else docker_client
         self._dockerfile = dockerfile
         self._downloader = downloader
         self._repository = repository
 
-    def download(self, agree_to_meula_and_pp):
+        """ Bedrock Server の Zip ファイルをダウンロードするメソッド。
+
+        Args:
+            agree_to_meula_and_pp (bool): MEULA 及び Privacy Policy に同意するか否か.
+        """
         downloader = self._downloader
         downloader.download_latest_version_zip_file_if_needed(agree_to_meula_and_pp=agree_to_meula_and_pp)
