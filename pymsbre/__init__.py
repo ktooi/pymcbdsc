@@ -1,4 +1,5 @@
 import docker
+from docker.client import DockerClient
 import requests
 import re
 import os.path
@@ -56,10 +57,11 @@ class MsbreDownloader(object):
     """
 
     def __init__(self,
-                 download_dir=download_dir(),
-                 url="https://www.minecraft.net/en-us/download/server/bedrock/",
-                 zip_url_pat=("https:\\/\\/minecraft\\.azureedge\\.net\\/bin-linux\\/"
-                              "bedrock-server-([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)\\.zip"),
+                 download_dir: str = download_dir(),
+                 url: str = "https://www.minecraft.net/en-us/download/server/bedrock/",
+                 zip_url_pat: str = ("https:\\/\\/minecraft\\.azureedge\\.net\\/bin-linux\\/"
+                                     "bedrock-server-([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)\\.zip"),
+                 agree_to_meula_and_pp: bool = False) -> None:
         """ MsbreDownloader インスタンスの初期化メソッド。
 
         Args:
@@ -153,6 +155,7 @@ class MsbreDownloader(object):
         return os.path.exists(self.latest_version_zip_filepath())
 
     @classmethod
+    def download(cls, url: str, filepath: str) -> None:
         """ `url` で指定されたファイルを、ダウンロードして `filepath` に保存するクラスメソッド。
 
         Args:
@@ -164,6 +167,7 @@ class MsbreDownloader(object):
         with open(filepath, "wb") as f:
             f.write(res.content)
 
+    def download_latest_version_zip_file(self, agree_to_meula_and_pp: bool = None) -> None:
         """ Bedrock Server の最新版の Zip ファイルをダウンロードするメソッド。
 
         Args:
@@ -180,6 +184,7 @@ class MsbreDownloader(object):
         self.download(url=self.zip_url(),
                       filepath=self.latest_version_zip_filepath())
 
+    def download_latest_version_zip_file_if_needed(self, agree_to_meula_and_pp: bool = None) -> None:
         """ Bedrock Server の最新版の Zip ファイルがローカルになかった場合にのみ、ダウンロードするメソッド。
 
         Args:
@@ -191,6 +196,11 @@ class MsbreDownloader(object):
 
 class MsbreDockerManager(object):
 
+    def __init__(self,
+                 docker_client: DockerClient = None,
+                 downloader: MsbreDownloader = MsbreDownloader(),
+                 dockerfile: str = os.path.join(os_getcwd(), "Dockerfile"),
+                 repository: str = "bedrock") -> None:
         """[summary]
 
         Args:
@@ -204,6 +214,7 @@ class MsbreDockerManager(object):
         self._downloader = downloader
         self._repository = repository
 
+    def download(self, agree_to_meula_and_pp: bool) -> None:
         """ Bedrock Server の Zip ファイルをダウンロードするメソッド。
 
         Args:
