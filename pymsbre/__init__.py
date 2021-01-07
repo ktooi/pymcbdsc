@@ -131,19 +131,19 @@ class MsbreDownloader(object):
             self._latest_filename = os.path.basename(zip_url)
         return self._latest_filename
 
-    def download_dir(self, abstruct=False) -> str:
+    def download_dir(self, relative=False) -> str:
         """ Bedrock Server の zip ファイルをダウンロードするディレクトリ(フォルダ)を戻すメソッド。
 
         The method returns the download directory of the Bedrock Server file.
 
         Args:
-            abstruct (bool, optional): pymsbre_root_dir からの相対パスを戻すか否か。 Defaults to False.
+            relative (bool, optional): pymsbre_root_dir からの相対パスを戻すか否か。 Defaults to False.
 
         Returns:
             str: Bedrock Server の zip ファイルをダウンロードするディレクトリ(フォルダ)。
         """
         downloads = "downloads"
-        return downloads if abstruct else os.path.join(self._pymsbre_root_dir, downloads)
+        return downloads if relative else os.path.join(self._pymsbre_root_dir, downloads)
 
     def root_dir(self) -> str:
         return self._pymsbre_root_dir
