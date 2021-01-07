@@ -10,6 +10,9 @@ from os import getcwd as os_getcwd
 from os import name as os_name
 
 
+__version__ = "0.1.0"
+
+
 def download_dir():
     """ OS 毎のデフォルトのダウンロードディレクトリ(フォルダ)を戻す関数。
 
