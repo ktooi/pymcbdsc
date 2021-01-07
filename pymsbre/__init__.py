@@ -66,8 +66,11 @@ class MsbreDownloader(object):
 
         Args:
             download_dir (str, optional): ダウンロードした Bedrock Server の Zip ファイルを保存するディレクトリ(フォルダ). Defaults to download_dir().
-            url (str, optional): Bedrock Server のダウンロードリンクが掲載されているページへの URL. Defaults to "https://www.minecraft.net/en-us/download/server/bedrock/".
-            zip_url_pat (str, optional): `url` に掲載されているダウンロードリンクのパターン. Defaults to ("https:\/\/minecraft\.azureedge\.net\/bin-linux\/" "bedrock-server-([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\.zip").
+            url (str, optional): Bedrock Server のダウンロードリンクが掲載されているページへの URL.
+                                 Defaults to "https://www.minecraft.net/en-us/download/server/bedrock/".
+            zip_url_pat (str, optional): `url` に掲載されているダウンロードリンクのパターン.
+                                         Defaults to ("https:\\/\\/minecraft\\.azureedge\\.net\\/bin-linux\\/"
+                                                      "bedrock-server-([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)\\.zip").
             agree_to_meula_and_pp (bool, optional): MEULA 及び Privacy Policy に同意するか否か. Defaults to False.
         """
         self._download_dir = download_dir
