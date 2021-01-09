@@ -194,13 +194,12 @@ class MsbreDownloader(object):
             agree_to_meula_and_pp (bool, optional): MEULA 及び Privacy Policy に同意するか否か. Defaults to None.
 
         Raises:
-            ValueError: [description]
+            FailureAgreeMeulaAndPpError: MEULA と Privacy Policy に同意していない場合に raise.
         """
         if agree_to_meula_and_pp is None:
             agree_to_meula_and_pp = self._agree_to_meula_and_pp
         if not agree_to_meula_and_pp:
-            # TODO
-            raise ValueError()
+            raise FailureAgreeMeulaAndPpError()
         self.download(url=self.zip_url(),
                       filepath=self.latest_version_zip_filepath())
 
@@ -212,6 +211,15 @@ class MsbreDownloader(object):
         """
         if not self.has_latest_version_zip_file():
             self.download_latest_version_zip_file(agree_to_meula_and_pp=agree_to_meula_and_pp)
+
+
+class FailureAgreeMeulaAndPpError(Exception):
+    """ MEULA と Privacy Policy への未同意であることを示す例外。
+
+    Minecraft Bedrock Edition のサーバをダウンロードする為には、 MEULA と Privacy Policy に同意する必要がありますが、
+    同意せずにダウンロードしようとした場合にこの例外が Raise します。
+    """
+    pass
 
 
 class MsbreDockerManager(object):
