@@ -12,8 +12,14 @@ jobs:
       - python/install-deps
       - python/save-cache
       - run:
+          command: ./setup.py bdist_wheel
+          name: Build
+      - run:
           command: ./manage.py test
           name: Test
+      - store_artifacts:
+          path: dist
+          destination: package
 
 workflows:
   main:
