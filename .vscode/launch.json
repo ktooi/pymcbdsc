@@ -15,6 +15,15 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Python: bdist_wheel",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/setup.py",
+            "args": [
+                "bdist_wheel"
+            ]
+        },
+        {
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
