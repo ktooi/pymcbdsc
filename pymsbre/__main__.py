@@ -9,7 +9,7 @@
 import os
 from logging import basicConfig, getLogger, DEBUG, INFO
 from argparse import ArgumentParser, Namespace
-from pymsbre import MsbreDownloader, pymsbre_root_dir
+from pymsbre import MsbreDownloader, MsbreDockerManager, pymsbre_root_dir
 
 
 # これはメインのファイルにのみ書く
@@ -40,6 +40,12 @@ def download(args: Namespace, downloader: MsbreDownloader) -> None:
     downloader.download_latest_version_zip_file_if_needed()
 
 
+def build(args: Namespace, downloader: MsbreDownloader) -> None:
+    manager = MsbreDockerManager(downloader=downloader)
+    b_version = args.bedrock_version if args.bedrock_version else downloader.latest_version()
+    manager.build_image(version=b_version)
+
+
 def parse_args() -> Namespace:
     parser = ArgumentParser(description=("This project provides very easier setup and management "
                                          "for Minecraft server (Bedrock Edition)."))
@@ -58,6 +64,10 @@ def parse_args() -> Namespace:
 
     subcmd_download = subparser.add_parser("download", parents=[common_parser])
     subcmd_download.set_defaults(func=download)
+
+    subcmd_build = subparser.add_parser("build", parents=[common_parser])
+    subcmd_build.add_argument('-V', '--bedrock-version')
+    subcmd_build.set_defaults(func=build)
 
     return parser.parse_args()
 

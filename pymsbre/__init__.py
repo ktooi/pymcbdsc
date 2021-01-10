@@ -3,8 +3,6 @@ from docker.client import DockerClient
 import requests
 import re
 import os.path
-from os import getcwd as os_getcwd
-
 # To can mock the os.name like below line:
 # >>> os_name = "posix"
 # >>> p = mock.patch('pymsbre.os_name', os_name)
@@ -249,22 +247,29 @@ class FailureAgreeMeulaAndPpError(Exception):
 
 
 class MsbreDockerManager(object):
+    """ Bedrock Server のコンテナとコンテナイメージの作成・管理を行うクラス。
+    """
 
     def __init__(self,
                  docker_client: DockerClient = None,
                  downloader: MsbreDownloader = MsbreDownloader(),
-                 dockerfile: str = os.path.join(os_getcwd(), "Dockerfile"),
+                 dockerfile: str = "Dockerfile",
                  repository: str = "bedrock") -> None:
         """[summary]
 
         Args:
-            docker_client (DockerClient, optional): [description]. Defaults to None.
+            docker_client (DockerClient, optional): Docker ホストに接続する DockerClient インスタンス.
+                                                    None の場合は `docker.from_env()` の戻り値を利用する. Defaults to None.
             downloader (MsbreDownloader, optional): [description]. Defaults to MsbreDownloader().
-            dockerfile (str, optional): [description]. Defaults to os.path.join(os_getcwd(), "Dockerfile").
+            dockerfile (str, optional): [description]. Defaults to "Dockerfile".
             repository (str, optional): [description]. Defaults to "bedrock".
         """
+        # 引数のデフォルト値を下記のようにすると、 unittest で import した際に docker.from_env() がコールされてしまい
+        # import することも patch することもできない。
+        # docker_client: DockerClient = docker.from_env()
+        # このため、デフォルト値を None としておき、 None の場合に docker.from_env() をコールする。
         self._docker_client = docker.from_env() if docker_client is None else docker_client
-        self._dockerfile = dockerfile
+        self._dockerfile = os.path.join(downloader.root_dir(), dockerfile)
         self._downloader = downloader
         self._repository = repository
 
@@ -276,3 +281,74 @@ class MsbreDockerManager(object):
         """
         downloader = self._downloader
         downloader.download_latest_version_zip_file_if_needed(agree_to_meula_and_pp=agree_to_meula_and_pp)
+
+    def build_image(self, version: str = None, extra_buildargs: dict = None, **extra_build_opt):
+        """ Minecraft Bedrock Server の Docker Image を Build するメソッド。
+
+        This method build the Docker Image of the Minecraft Bedrock Server.
+
+        Args:
+            version (str, optional): Build する Docker Image の Minecraft のバージョン. None の場合は、最新バージョンとなる. Defaults to None.
+            extra_buildargs (dict, optional): Docker Image を Build する際の、追加の引数. Defaults to None.
+
+        Returns:
+            [type]: Build した Docker Image.
+        """
+        dl = self._downloader
+        dc_images = self._docker_client.images
+        path = dl.root_dir()
+        dockerfile = self._dockerfile
+        if version is None:
+            version = dl.latest_version()
+        buildargs = {"BEDROCK_SERVER_VER": version,
+                     "BEDROCK_SERVER_DIR": dl.download_dir(relative=True)}
+        if extra_buildargs is not None:
+            buildargs.update(extra_buildargs)
+        tag = "{repository}:{version}".format(repository=self._repository, version=version)
+        return dc_images.build(path=path, dockerfile=dockerfile, buildargs=buildargs, tag=tag, **extra_build_opt)
+
+    def get_image(self, version: str = None):
+        """ Minecraft Bedrock Server の、指定されたバージョンの Docker Image を戻すメソッド。
+
+        This method returns the Docker Image of the Minecraft Bedrock Server that you specified version.
+
+        Args:
+            version (str, optional): 取得する Docker Image の Minecraft のバージョン. None の場合は、最新バージョンとなる. Defaults to None.
+
+        Returns:
+            [type]: 指定されたバージョンの Docker Image.
+        """
+        dl = self._downloader
+        dc_images = self._docker_client.images
+        if version is None:
+            version = dl.latest_version()
+        tag = "{repository}:{version}".format(repository=self._repository, version=version)
+        return dc_images.get(name=tag)
+
+
+class MsbreDockerContainer(object):
+
+    def __init__(self,
+                 msbre_manager: MsbreDockerManager) -> None:
+        pass
+
+    def start(self):
+        pass
+
+    def stop(self):
+        pass
+
+    def run(self):
+        pass
+
+    def remove(self):
+        pass
+
+    def status(self):
+        pass
+
+    def backup(self):
+        pass
+
+    def restore(self):
+        pass

@@ -24,6 +24,15 @@
             ]
         },
         {
+            "name": "Pymsbre: build",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/pymsbre/__main__.py",
+            "args": [
+                "build"
+            ]
+        },
+        {
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
