@@ -1,4 +1,4 @@
-# pymsbre
+# pymcdbsc
 
 ## Getting Started
 
@@ -9,12 +9,12 @@
 1.  ディレクトリ(フォルダ)やファイルを配置します。
 
     ```
-    python -m pymsbre install
+    python -m pymcdbsc install
     ```
     または
 
     ```
-    msbre install
+    mcdbsc install
     ```
 
 ## Authors

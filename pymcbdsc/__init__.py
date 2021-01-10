@@ -5,39 +5,39 @@ import re
 import os.path
 # To can mock the os.name like below line:
 # >>> os_name = "posix"
-# >>> p = mock.patch('pymsbre.os_name', os_name)
+# >>> p = mock.patch('pymcdbsc.os_name', os_name)
 from os import name as os_name
 
 
 __version__ = "0.1.0"
 
 
-def pymsbre_root_dir():
-    """ pymsbre が利用するディレクトリ(フォルダ)の OS 毎のデフォルトパスを戻す関数。
+def pymcdbsc_root_dir():
+    """ pymcdbsc が利用するディレクトリ(フォルダ)の OS 毎のデフォルトパスを戻す関数。
 
-    The function returns the default root directory of pymsbre each by OS.
+    The function returns the default root directory of pymcdbsc each by OS.
 
     Returns:
-        str: pymsbre が利用するディレクトリ(フォルダ)の OS 毎のデフォルトパス。
+        str: pymcdbsc が利用するディレクトリ(フォルダ)の OS 毎のデフォルトパス。
 
     Examples:
 
-        >>> import pymsbre
+        >>> import pymcdbsc
         >>>
-        >>> pymsbre.pymsbre_root_dir()
-        '/var/lib/pymsbre'
+        >>> pymcdbsc.pymcdbsc_root_dir()
+        '/var/lib/pymcdbsc'
     """
     r = None
     if os_name == 'nt':
-        r = "c:\\pymsbre"
+        r = "c:\\pymcdbsc"
     elif os_name == 'posix':
-        r = "/var/lib/pymsbre"
+        r = "/var/lib/pymcdbsc"
     else:
-        r = "/var/lib/pymsbre"
+        r = "/var/lib/pymcdbsc"
     return r
 
 
-class MsbreDownloader(object):
+class McdbscDownloader(object):
     """ Bedrock Server の最新ファイルについてダウンロードし、管理するクラス。
 
     このクラスを利用するにあたっては、本モジュールのライセンスの他に Minecraft End User License Agreement
@@ -49,28 +49,28 @@ class MsbreDownloader(object):
 
     Examples:
 
-        >>> from pymsbre import MsbreDownloader
+        >>> from pymcdbsc import McdbscDownloader
         >>>
-        >>> downloader = MsbreDownloader()
+        >>> downloader = McdbscDownloader()
         >>> # You have to agree to the Minecraft End User License Agreement and Privacy Policy.
         >>> # See also:
         >>> #     * Minecraft End User License Agreement : https://account.mojang.com/terms
         >>> #     * Privacy Policy : https://privacy.microsoft.com/en-us/privacystatement
         >>> downloader.download_latest_version_zip_file_if_needed(agree_to_meula_and_pp=True)
         >>> downloader.latest_version_zip_filepath()
-        '/var/lib/pymsbre/downloads/bedrock-server-1.16.201.02.zip'
+        '/var/lib/pymcdbsc/downloads/bedrock-server-1.16.201.02.zip'
     """
 
     def __init__(self,
-                 pymsbre_root_dir: str = pymsbre_root_dir(),
+                 pymcdbsc_root_dir: str = pymcdbsc_root_dir(),
                  url: str = "https://www.minecraft.net/en-us/download/server/bedrock/",
                  zip_url_pat: str = ("https:\\/\\/minecraft\\.azureedge\\.net\\/bin-linux\\/"
                                      "bedrock-server-([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)\\.zip"),
                  agree_to_meula_and_pp: bool = False) -> None:
-        """ MsbreDownloader インスタンスの初期化メソッド。
+        """ McdbscDownloader インスタンスの初期化メソッド。
 
         Args:
-            pymsbre_root_dir (str, optional): pymsbre が利用するディレクトリ(フォルダ). Defaults to pymsbre_root_dir().
+            pymcdbsc_root_dir (str, optional): pymcdbsc が利用するディレクトリ(フォルダ). Defaults to pymcdbsc_root_dir().
             url (str, optional): Bedrock Server のダウンロードリンクが掲載されているページへの URL.
                                  Defaults to "https://www.minecraft.net/en-us/download/server/bedrock/".
             zip_url_pat (str, optional): `url` に掲載されているダウンロードリンクのパターン.
@@ -78,7 +78,7 @@ class MsbreDownloader(object):
                                                       "bedrock-server-([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)\\.zip").
             agree_to_meula_and_pp (bool, optional): MEULA 及び Privacy Policy に同意するか否か. Defaults to False.
         """
-        self._pymsbre_root_dir = pymsbre_root_dir
+        self._pymcdbsc_root_dir = pymcdbsc_root_dir
         self._url = url
         self._zip_url_pat = re.compile(zip_url_pat)
         self._agree_to_meula_and_pp = agree_to_meula_and_pp
@@ -151,7 +151,7 @@ class MsbreDownloader(object):
         The method returns the download directory of the Bedrock Server file.
 
         Args:
-            relative (bool, optional): pymsbre_root_dir からの相対パスを戻すか否か。 Defaults to False.
+            relative (bool, optional): pymcdbsc_root_dir からの相対パスを戻すか否か。 Defaults to False.
 
         Returns:
             str: Bedrock Server の zip ファイルをダウンロードするディレクトリ(フォルダ)。
@@ -159,32 +159,32 @@ class MsbreDownloader(object):
         Examples:
 
             >>> downloader.download_dir()
-            '/var/lib/pymsbre/downloads'
+            '/var/lib/pymcdbsc/downloads'
             >>>
             >>> downloader.download_dir(relative=True)
             'downloads'
         """
         downloads = "downloads"
-        return downloads if relative else os.path.join(self._pymsbre_root_dir, downloads)
+        return downloads if relative else os.path.join(self._pymcdbsc_root_dir, downloads)
 
     def root_dir(self) -> str:
-        """ Pymsbre が利用するディレクトリ(フォルダ)のパスを戻すメソッド。
+        """ Pymcdbsc が利用するディレクトリ(フォルダ)のパスを戻すメソッド。
 
         Dockerfile や env-file, ダウンロードした Bedrock Server の Zip ファイルなどはこの配下に配置される。
 
-        This method returns the directory path used by the pymsbre.
+        This method returns the directory path used by the pymcdbsc.
 
         The directory will contains Dockerfile, env-files and downloaded the Bedrock Server Zip file.
 
         Returns:
-            str: Pymsbre が利用するディレクトリ(フォルダ)のパス.
+            str: Pymcdbsc が利用するディレクトリ(フォルダ)のパス.
 
         Examples:
 
             >>> downloader.root_dir()
-            '/var/lib/pymsbre'
+            '/var/lib/pymcdbsc'
         """
-        return self._pymsbre_root_dir
+        return self._pymcdbsc_root_dir
 
     def latest_version_zip_filepath(self) -> str:
         """ ローカル上に保存されている(或いは保存するべき)最新の Bedrock Server の zip ファイルパスを戻すメソッド。
@@ -197,7 +197,7 @@ class MsbreDownloader(object):
         Examples:
 
             >>> downloader.latest_filepath()
-            '/var/lib/pymsbre/downloads/bedrock-server-1.16.201.02.zip'
+            '/var/lib/pymcdbsc/downloads/bedrock-server-1.16.201.02.zip'
         """
         download_dir = self.download_dir()
         latest_filename = self.latest_filename()
@@ -275,13 +275,13 @@ class FailureAgreeMeulaAndPpError(Exception):
     pass
 
 
-class MsbreDockerManager(object):
+class McdbscDockerManager(object):
     """ Bedrock Server のコンテナとコンテナイメージの作成・管理を行うクラス。
     """
 
     def __init__(self,
                  docker_client: DockerClient = None,
-                 downloader: MsbreDownloader = MsbreDownloader(),
+                 downloader: McdbscDownloader = McdbscDownloader(),
                  dockerfile: str = "Dockerfile",
                  repository: str = "bedrock") -> None:
         """[summary]
@@ -289,7 +289,7 @@ class MsbreDockerManager(object):
         Args:
             docker_client (DockerClient, optional): Docker ホストに接続する DockerClient インスタンス.
                                                     None の場合は `docker.from_env()` の戻り値を利用する. Defaults to None.
-            downloader (MsbreDownloader, optional): [description]. Defaults to MsbreDownloader().
+            downloader (McdbscDownloader, optional): [description]. Defaults to McdbscDownloader().
             dockerfile (str, optional): [description]. Defaults to "Dockerfile".
             repository (str, optional): [description]. Defaults to "bedrock".
         """
@@ -357,10 +357,10 @@ class MsbreDockerManager(object):
         return dc_images.get(name=tag)
 
 
-class MsbreDockerContainer(object):
+class McdbscDockerContainer(object):
 
     def __init__(self,
-                 msbre_manager: MsbreDockerManager) -> None:
+                 mcdbsc_manager: McdbscDockerManager) -> None:
         pass
 
     def start(self):

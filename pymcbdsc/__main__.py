@@ -1,15 +1,15 @@
-""" このファイルは pymsbre モジュールをコマンドラインから使用できるようにするファイルです。
+""" このファイルは pymcdbsc モジュールをコマンドラインから使用できるようにするファイルです。
 
 詳細な利用方法はヘルプを参照してください。
 
-`python -m pymsbre -h`, `python -m pymsbre <subcommand> -h` 等で確認することができます。
-また、 pip でインストールした場合には `msbre -h`, `msbre <subcommand> -h` 等で確認することもできます。
+`python -m pymcdbsc -h`, `python -m pymcdbsc <subcommand> -h` 等で確認することができます。
+また、 pip でインストールした場合には `mcdbsc -h`, `mcdbsc <subcommand> -h` 等で確認することもできます。
 """
 
 import os
 from logging import basicConfig, getLogger, DEBUG, INFO
 from argparse import ArgumentParser, Namespace
-from pymsbre import MsbreDownloader, MsbreDockerManager, pymsbre_root_dir
+from pymcdbsc import McdbscDownloader, McdbscDockerManager, pymcdbsc_root_dir
 
 
 # これはメインのファイルにのみ書く
@@ -25,23 +25,23 @@ def mkdir_if_needed(dir: str) -> None:
         os.makedirs(dir)
 
 
-def install(args: Namespace, downloader: MsbreDownloader) -> None:
+def install(args: Namespace, downloader: McdbscDownloader) -> None:
     root_dir = args.root_dir
     dl_dir = downloader.download_dir()
     mkdir_if_needed(root_dir)
     mkdir_if_needed(dl_dir)
 
 
-def uninstall(args: Namespace, downloader: MsbreDownloader) -> None:
+def uninstall(args: Namespace, downloader: McdbscDownloader) -> None:
     pass
 
 
-def download(args: Namespace, downloader: MsbreDownloader) -> None:
+def download(args: Namespace, downloader: McdbscDownloader) -> None:
     downloader.download_latest_version_zip_file_if_needed()
 
 
-def build(args: Namespace, downloader: MsbreDownloader) -> None:
-    manager = MsbreDockerManager(downloader=downloader)
+def build(args: Namespace, downloader: McdbscDownloader) -> None:
+    manager = McdbscDockerManager(downloader=downloader)
     b_version = args.bedrock_version if args.bedrock_version else downloader.latest_version()
     manager.build_image(version=b_version)
 
@@ -54,7 +54,7 @@ def parse_args() -> Namespace:
 
     # 共通となる引数を定義。
     common_parser = ArgumentParser(add_help=False)
-    common_parser.add_argument('-r', '--root-dir', default=pymsbre_root_dir(), help="")
+    common_parser.add_argument('-r', '--root-dir', default=pymcdbsc_root_dir(), help="")
     common_parser.add_argument('--i-agree-to-meula-and-pp', action='store_true',
                                help=("You have to agree to the MEULA and Privacy Policy at download the Bedrock Server. "
                                      "If you specify this argument, you agree to them."))
@@ -77,7 +77,7 @@ def main():
     if args.debug:
         logger.info("Set log level to DEBUG.")
         logger.setLevel(DEBUG)
-    dl = MsbreDownloader(pymsbre_root_dir=args.root_dir, agree_to_meula_and_pp=args.i_agree_to_meula_and_pp)
+    dl = McdbscDownloader(pymcdbsc_root_dir=args.root_dir, agree_to_meula_and_pp=args.i_agree_to_meula_and_pp)
     args.func(args, dl)
 
 

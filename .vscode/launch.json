@@ -24,10 +24,10 @@
             ]
         },
         {
-            "name": "Pymsbre: build",
+            "name": "Pymcdbsc: build",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/pymsbre/__main__.py",
+            "program": "${workspaceFolder}/pymcdbsc/__main__.py",
             "args": [
                 "build"
             ]
