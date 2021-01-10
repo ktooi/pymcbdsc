@@ -48,7 +48,7 @@ def build(args: Namespace, downloader: McdbscDownloader) -> None:
 
 def parse_args() -> Namespace:
     parser = ArgumentParser(description=("This project provides very easier setup and management "
-                                         "for Minecraft server (Bedrock Edition)."))
+                                         "for Minecraft Bedrock Dedicated Server."))
     parser.add_argument('-d', '--debug', action='store_true', help="Show verbose messages.")
     subparser = parser.add_subparsers()
 
