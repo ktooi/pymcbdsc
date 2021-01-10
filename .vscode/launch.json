@@ -27,7 +27,7 @@
             "name": "Pymcdbsc: build",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/pymcdbsc/__main__.py",
+            "program": "${workspaceFolder}/pymcbdsc/__main__.py",
             "args": [
                 "build"
             ]

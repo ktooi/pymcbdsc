@@ -1,15 +1,15 @@
-""" このファイルは pymcdbsc モジュールをコマンドラインから使用できるようにするファイルです。
+""" このファイルは pymcbdsc モジュールをコマンドラインから使用できるようにするファイルです。
 
 詳細な利用方法はヘルプを参照してください。
 
-`python -m pymcdbsc -h`, `python -m pymcdbsc <subcommand> -h` 等で確認することができます。
+`python -m pymcbdsc -h`, `python -m pymcbdsc <subcommand> -h` 等で確認することができます。
 また、 pip でインストールした場合には `mcdbsc -h`, `mcdbsc <subcommand> -h` 等で確認することもできます。
 """
 
 import os
 from logging import basicConfig, getLogger, DEBUG, INFO
 from argparse import ArgumentParser, Namespace
-from pymcdbsc import McdbscDownloader, McdbscDockerManager, pymcdbsc_root_dir
+from pymcbdsc import McdbscDownloader, McdbscDockerManager, pymcbdsc_root_dir
 
 
 # これはメインのファイルにのみ書く
@@ -54,7 +54,7 @@ def parse_args() -> Namespace:
 
     # 共通となる引数を定義。
     common_parser = ArgumentParser(add_help=False)
-    common_parser.add_argument('-r', '--root-dir', default=pymcdbsc_root_dir(), help="")
+    common_parser.add_argument('-r', '--root-dir', default=pymcbdsc_root_dir(), help="")
     common_parser.add_argument('--i-agree-to-meula-and-pp', action='store_true',
                                help=("You have to agree to the MEULA and Privacy Policy at download the Bedrock Server. "
                                      "If you specify this argument, you agree to them."))
@@ -77,7 +77,7 @@ def main():
     if args.debug:
         logger.info("Set log level to DEBUG.")
         logger.setLevel(DEBUG)
-    dl = McdbscDownloader(pymcdbsc_root_dir=args.root_dir, agree_to_meula_and_pp=args.i_agree_to_meula_and_pp)
+    dl = McdbscDownloader(pymcbdsc_root_dir=args.root_dir, agree_to_meula_and_pp=args.i_agree_to_meula_and_pp)
     args.func(args, dl)
 
 

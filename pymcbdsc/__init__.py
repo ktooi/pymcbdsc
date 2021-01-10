@@ -5,35 +5,35 @@ import re
 import os.path
 # To can mock the os.name like below line:
 # >>> os_name = "posix"
-# >>> p = mock.patch('pymcdbsc.os_name', os_name)
+# >>> p = mock.patch('pymcbdsc.os_name', os_name)
 from os import name as os_name
 
 
 __version__ = "0.1.0"
 
 
-def pymcdbsc_root_dir():
-    """ pymcdbsc が利用するディレクトリ(フォルダ)の OS 毎のデフォルトパスを戻す関数。
+def pymcbdsc_root_dir():
+    """ pymcbdsc が利用するディレクトリ(フォルダ)の OS 毎のデフォルトパスを戻す関数。
 
-    The function returns the default root directory of pymcdbsc each by OS.
+    The function returns the default root directory of pymcbdsc each by OS.
 
     Returns:
-        str: pymcdbsc が利用するディレクトリ(フォルダ)の OS 毎のデフォルトパス。
+        str: pymcbdsc が利用するディレクトリ(フォルダ)の OS 毎のデフォルトパス。
 
     Examples:
 
-        >>> import pymcdbsc
+        >>> import pymcbdsc
         >>>
-        >>> pymcdbsc.pymcdbsc_root_dir()
-        '/var/lib/pymcdbsc'
+        >>> pymcbdsc.pymcbdsc_root_dir()
+        '/var/lib/pymcbdsc'
     """
     r = None
     if os_name == 'nt':
-        r = "c:\\pymcdbsc"
+        r = "c:\\pymcbdsc"
     elif os_name == 'posix':
-        r = "/var/lib/pymcdbsc"
+        r = "/var/lib/pymcbdsc"
     else:
-        r = "/var/lib/pymcdbsc"
+        r = "/var/lib/pymcbdsc"
     return r
 
 
@@ -49,7 +49,7 @@ class McdbscDownloader(object):
 
     Examples:
 
-        >>> from pymcdbsc import McdbscDownloader
+        >>> from pymcbdsc import McdbscDownloader
         >>>
         >>> downloader = McdbscDownloader()
         >>> # You have to agree to the Minecraft End User License Agreement and Privacy Policy.
@@ -58,11 +58,11 @@ class McdbscDownloader(object):
         >>> #     * Privacy Policy : https://privacy.microsoft.com/en-us/privacystatement
         >>> downloader.download_latest_version_zip_file_if_needed(agree_to_meula_and_pp=True)
         >>> downloader.latest_version_zip_filepath()
-        '/var/lib/pymcdbsc/downloads/bedrock-server-1.16.201.02.zip'
+        '/var/lib/pymcbdsc/downloads/bedrock-server-1.16.201.02.zip'
     """
 
     def __init__(self,
-                 pymcdbsc_root_dir: str = pymcdbsc_root_dir(),
+                 pymcbdsc_root_dir: str = pymcbdsc_root_dir(),
                  url: str = "https://www.minecraft.net/en-us/download/server/bedrock/",
                  zip_url_pat: str = ("https:\\/\\/minecraft\\.azureedge\\.net\\/bin-linux\\/"
                                      "bedrock-server-([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)\\.zip"),
@@ -70,7 +70,7 @@ class McdbscDownloader(object):
         """ McdbscDownloader インスタンスの初期化メソッド。
 
         Args:
-            pymcdbsc_root_dir (str, optional): pymcdbsc が利用するディレクトリ(フォルダ). Defaults to pymcdbsc_root_dir().
+            pymcbdsc_root_dir (str, optional): pymcbdsc が利用するディレクトリ(フォルダ). Defaults to pymcbdsc_root_dir().
             url (str, optional): Bedrock Server のダウンロードリンクが掲載されているページへの URL.
                                  Defaults to "https://www.minecraft.net/en-us/download/server/bedrock/".
             zip_url_pat (str, optional): `url` に掲載されているダウンロードリンクのパターン.
@@ -78,7 +78,7 @@ class McdbscDownloader(object):
                                                       "bedrock-server-([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)\\.zip").
             agree_to_meula_and_pp (bool, optional): MEULA 及び Privacy Policy に同意するか否か. Defaults to False.
         """
-        self._pymcdbsc_root_dir = pymcdbsc_root_dir
+        self._pymcbdsc_root_dir = pymcbdsc_root_dir
         self._url = url
         self._zip_url_pat = re.compile(zip_url_pat)
         self._agree_to_meula_and_pp = agree_to_meula_and_pp
@@ -151,7 +151,7 @@ class McdbscDownloader(object):
         The method returns the download directory of the Bedrock Server file.
 
         Args:
-            relative (bool, optional): pymcdbsc_root_dir からの相対パスを戻すか否か。 Defaults to False.
+            relative (bool, optional): pymcbdsc_root_dir からの相対パスを戻すか否か。 Defaults to False.
 
         Returns:
             str: Bedrock Server の zip ファイルをダウンロードするディレクトリ(フォルダ)。
@@ -159,20 +159,20 @@ class McdbscDownloader(object):
         Examples:
 
             >>> downloader.download_dir()
-            '/var/lib/pymcdbsc/downloads'
+            '/var/lib/pymcbdsc/downloads'
             >>>
             >>> downloader.download_dir(relative=True)
             'downloads'
         """
         downloads = "downloads"
-        return downloads if relative else os.path.join(self._pymcdbsc_root_dir, downloads)
+        return downloads if relative else os.path.join(self._pymcbdsc_root_dir, downloads)
 
     def root_dir(self) -> str:
         """ Pymcdbsc が利用するディレクトリ(フォルダ)のパスを戻すメソッド。
 
         Dockerfile や env-file, ダウンロードした Bedrock Server の Zip ファイルなどはこの配下に配置される。
 
-        This method returns the directory path used by the pymcdbsc.
+        This method returns the directory path used by the pymcbdsc.
 
         The directory will contains Dockerfile, env-files and downloaded the Bedrock Server Zip file.
 
@@ -182,9 +182,9 @@ class McdbscDownloader(object):
         Examples:
 
             >>> downloader.root_dir()
-            '/var/lib/pymcdbsc'
+            '/var/lib/pymcbdsc'
         """
-        return self._pymcdbsc_root_dir
+        return self._pymcbdsc_root_dir
 
     def latest_version_zip_filepath(self) -> str:
         """ ローカル上に保存されている(或いは保存するべき)最新の Bedrock Server の zip ファイルパスを戻すメソッド。
@@ -197,7 +197,7 @@ class McdbscDownloader(object):
         Examples:
 
             >>> downloader.latest_filepath()
-            '/var/lib/pymcdbsc/downloads/bedrock-server-1.16.201.02.zip'
+            '/var/lib/pymcbdsc/downloads/bedrock-server-1.16.201.02.zip'
         """
         download_dir = self.download_dir()
         latest_filename = self.latest_filename()

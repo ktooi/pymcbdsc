@@ -1,31 +1,31 @@
 import unittest
 from unittest import mock
-import pymcdbsc
+import pymcbdsc
 import re
 import os
 
 
 class TestMcdbscDownloader(unittest.TestCase):
 
-    os_name2root_dir = {"posix": "/var/lib/pymcdbsc",
-                        "nt": "c:\\pymcdbsc"}
+    os_name2root_dir = {"posix": "/var/lib/pymcbdsc",
+                        "nt": "c:\\pymcbdsc"}
 
     def setUp(self) -> None:
-        self.patcher_docker = mock.patch('pymcdbsc.docker')
-        self.patcher_requests = mock.patch('pymcdbsc.requests')
+        self.patcher_docker = mock.patch('pymcbdsc.docker')
+        self.patcher_requests = mock.patch('pymcbdsc.requests')
         self.mock_docker = self.patcher_docker.start()
         self.mock_requests = self.patcher_requests.start()
-        self.mcdbsc = pymcdbsc.McdbscDownloader()
+        self.mcdbsc = pymcbdsc.McdbscDownloader()
 
     def tearDown(self) -> None:
         self.patcher_docker.stop()
         self.patcher_requests.stop()
 
     def _test_root_dir(self, os_name, exp):
-        p = mock.patch('pymcdbsc.os_name', os_name)
+        p = mock.patch('pymcbdsc.os_name', os_name)
         p.start()
 
-        act = pymcdbsc.pymcdbsc_root_dir()
+        act = pymcbdsc.pymcbdsc_root_dir()
         self.assertEqual(act, exp)
         p.stop()
 

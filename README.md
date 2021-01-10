@@ -1,4 +1,4 @@
-# pymcdbsc
+# pymcbdsc
 
 ## Getting Started
 
@@ -9,7 +9,7 @@
 1.  ディレクトリ(フォルダ)やファイルを配置します。
 
     ```
-    python -m pymcdbsc install
+    python -m pymcbdsc install
     ```
     または
 
