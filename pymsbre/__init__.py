@@ -19,6 +19,13 @@ def pymsbre_root_dir():
 
     Returns:
         str: pymsbre が利用するディレクトリ(フォルダ)の OS 毎のデフォルトパス。
+
+    Examples:
+
+        >>> import pymsbre
+        >>>
+        >>> pymsbre.pymsbre_root_dir()
+        '/var/lib/pymsbre'
     """
     r = None
     if os_name == 'nt':
@@ -148,6 +155,14 @@ class MsbreDownloader(object):
 
         Returns:
             str: Bedrock Server の zip ファイルをダウンロードするディレクトリ(フォルダ)。
+
+        Examples:
+
+            >>> downloader.download_dir()
+            '/var/lib/pymsbre/downloads'
+            >>>
+            >>> downloader.download_dir(relative=True)
+            'downloads'
         """
         downloads = "downloads"
         return downloads if relative else os.path.join(self._pymsbre_root_dir, downloads)
@@ -163,6 +178,11 @@ class MsbreDownloader(object):
 
         Returns:
             str: Pymsbre が利用するディレクトリ(フォルダ)のパス.
+
+        Examples:
+
+            >>> downloader.root_dir()
+            '/var/lib/pymsbre'
         """
         return self._pymsbre_root_dir
 
@@ -202,6 +222,8 @@ class MsbreDownloader(object):
     def download(cls, url: str, filepath: str) -> None:
         """ `url` で指定されたファイルを、ダウンロードして `filepath` に保存するクラスメソッド。
 
+        This classmethod download and save file from the `url` argument.
+
         Args:
             url (str): ダウンロードするファイルの URL.
             filepath (str): ダウンロードしたファイルを保存するファイルパス.
@@ -213,6 +235,8 @@ class MsbreDownloader(object):
 
     def download_latest_version_zip_file(self, agree_to_meula_and_pp: bool = None) -> None:
         """ Bedrock Server の最新版の Zip ファイルをダウンロードするメソッド。
+
+        This method download the latest version of the Bedrock Server Zip file.
 
         Args:
             agree_to_meula_and_pp (bool, optional): MEULA 及び Privacy Policy に同意するか否か. Defaults to None.
@@ -230,6 +254,8 @@ class MsbreDownloader(object):
     def download_latest_version_zip_file_if_needed(self, agree_to_meula_and_pp: bool = None) -> None:
         """ Bedrock Server の最新版の Zip ファイルがローカルになかった場合にのみ、ダウンロードするメソッド。
 
+        This method will download the Bedrock Server Zip file if the downloads directory does not already contain it.
+
         Args:
             agree_to_meula_and_pp (bool, optional): MEULA 及び Privacy Policy に同意するか否か. Defaults to None.
         """
@@ -242,6 +268,9 @@ class FailureAgreeMeulaAndPpError(Exception):
 
     Minecraft Bedrock Edition のサーバをダウンロードする為には、 MEULA と Privacy Policy に同意する必要がありますが、
     同意せずにダウンロードしようとした場合にこの例外が Raise します。
+
+    TODO:
+        例外のメッセージに、 MEULA 及び Privacy Policy への同意が必要であるということがわかりやすいメッセージを追加する。
     """
     pass
 
@@ -275,6 +304,8 @@ class MsbreDockerManager(object):
 
     def download(self, agree_to_meula_and_pp: bool) -> None:
         """ Bedrock Server の Zip ファイルをダウンロードするメソッド。
+
+        This method downloads the Bedrock Server zip file.
 
         Args:
             agree_to_meula_and_pp (bool): MEULA 及び Privacy Policy に同意するか否か.
