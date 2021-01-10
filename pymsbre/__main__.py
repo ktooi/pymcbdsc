@@ -1,3 +1,11 @@
+""" このファイルは pymsbre モジュールをコマンドラインから使用できるようにするファイルです。
+
+詳細な利用方法はヘルプを参照してください。
+
+`python -m pymsbre -h`, `python -m pymsbre <subcommand> -h` 等で確認することができます。
+また、 pip でインストールした場合には `msbre -h`, `msbre <subcommand> -h` 等で確認することもできます。
+"""
+
 import os
 from logging import basicConfig, getLogger, DEBUG, INFO
 from argparse import ArgumentParser, Namespace
@@ -11,29 +19,34 @@ basicConfig(level=INFO)
 logger = getLogger(__name__)
 
 
-def mkdir_if_needed(dir):
+def mkdir_if_needed(dir: str) -> None:
     if not os.path.exists(dir):
         logger.info("Create a directory: {dir}".format(dir=dir))
         os.makedirs(dir)
 
 
-def install(args: Namespace, downloader: MsbreDownloader):
+def install(args: Namespace, downloader: MsbreDownloader) -> None:
     root_dir = args.root_dir
     dl_dir = downloader.download_dir()
     mkdir_if_needed(root_dir)
     mkdir_if_needed(dl_dir)
 
 
-def download(args: Namespace, downloader: MsbreDownloader):
+def uninstall(args: Namespace, downloader: MsbreDownloader) -> None:
+    pass
+
+
+def download(args: Namespace, downloader: MsbreDownloader) -> None:
     downloader.download_latest_version_zip_file_if_needed()
 
 
-def parse_args():
+def parse_args() -> Namespace:
     parser = ArgumentParser(description=("This project provides very easier setup and management "
                                          "for Minecraft server (Bedrock Edition)."))
     parser.add_argument('-d', '--debug', action='store_true', help="Show verbose messages.")
     subparser = parser.add_subparsers()
 
+    # 共通となる引数を定義。
     common_parser = ArgumentParser(add_help=False)
     common_parser.add_argument('-r', '--root-dir', default=pymsbre_root_dir(), help="")
     common_parser.add_argument('--i-agree-to-meula-and-pp', action='store_true',
