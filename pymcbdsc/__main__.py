@@ -54,7 +54,8 @@ def parse_args() -> Namespace:
 
     # 共通となる引数を定義。
     common_parser = ArgumentParser(add_help=False)
-    common_parser.add_argument('-r', '--root-dir', default=pymcbdsc_root_dir(), help="")
+    common_parser.add_argument('-r', '--root-dir', default=pymcbdsc_root_dir(),
+                               help="This directory is used for container management and storage of download files.")
     common_parser.add_argument('--i-agree-to-meula-and-pp', action='store_true',
                                help=("You have to agree to the MEULA and Privacy Policy at download the Bedrock Server. "
                                      "If you specify this argument, you agree to them."))
