@@ -83,6 +83,9 @@ class MsbreDownloader(object):
 
         The method get and return the URL of zip file of the Bedrock Server.
 
+        Returns:
+            str: Bedrock Server の zip ファイルをダウンロードできる URL.
+
         Examples:
 
             >>> downloader.zip_url()
@@ -107,6 +110,9 @@ class MsbreDownloader(object):
 
         The method returns the latest version number of the Bedrock Server.
 
+        Returns:
+            str: Bedrock Server の最新バージョン番号.
+
         Examples:
 
             >>> downloader.latest_version()
@@ -120,6 +126,9 @@ class MsbreDownloader(object):
         """ Bedrock Server の最新 zip ファイル名を戻すメソッド。
 
         The method returns the latest zip filename of the Bedrock Server.
+
+        Returns:
+            str: Bedrock Server の最新 zip ファイル名.
 
         Examples:
 
@@ -146,12 +155,26 @@ class MsbreDownloader(object):
         return downloads if relative else os.path.join(self._pymsbre_root_dir, downloads)
 
     def root_dir(self) -> str:
+        """ Pymsbre が利用するディレクトリ(フォルダ)のパスを戻すメソッド。
+
+        Dockerfile や env-file, ダウンロードした Bedrock Server の Zip ファイルなどはこの配下に配置される。
+
+        This method returns the directory path used by the pymsbre.
+
+        The directory will contains Dockerfile, env-files and downloaded the Bedrock Server Zip file.
+
+        Returns:
+            str: Pymsbre が利用するディレクトリ(フォルダ)のパス.
+        """
         return self._pymsbre_root_dir
 
     def latest_version_zip_filepath(self) -> str:
         """ ローカル上に保存されている(或いは保存するべき)最新の Bedrock Server の zip ファイルパスを戻すメソッド。
 
         The method returns the latest zip filepath of the Bedrock Server on the localhost.
+
+        Returns:
+            str: ローカル上に保存されている(或いは保存するべき)最新の Bedrock Server の zip ファイルパス.
 
         Examples:
 
@@ -166,6 +189,9 @@ class MsbreDownloader(object):
         """ ローカルホスト上に既に最新の Bedrock Server の zip ファイルが保存されているか否かを戻すメソッド。
 
         The method returns whether or not the localhost has the latest zip file of the Bedrock Server.
+
+        Returns:
+            bool: ローカルホスト上に既に最新の Bedrock Server の zip ファイルが保存されているか否か.
 
         Examples:
 
