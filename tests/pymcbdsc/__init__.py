@@ -5,7 +5,7 @@ import re
 import os
 
 
-class TestMcdbscDownloader(unittest.TestCase):
+class TestMcbdscDownloader(unittest.TestCase):
 
     os_name2root_dir = {"posix": "/var/lib/pymcbdsc",
                         "nt": "c:\\pymcbdsc"}
@@ -15,7 +15,7 @@ class TestMcdbscDownloader(unittest.TestCase):
         self.patcher_requests = mock.patch('pymcbdsc.requests')
         self.mock_docker = self.patcher_docker.start()
         self.mock_requests = self.patcher_requests.start()
-        self.mcdbsc = pymcbdsc.McdbscDownloader()
+        self.mcdbsc = pymcbdsc.McbdscDownloader()
 
     def tearDown(self) -> None:
         self.patcher_docker.stop()

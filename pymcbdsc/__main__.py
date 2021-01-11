@@ -9,7 +9,7 @@
 import os
 from logging import basicConfig, getLogger, DEBUG, INFO
 from argparse import ArgumentParser, Namespace
-from pymcbdsc import McdbscDownloader, McdbscDockerManager, pymcbdsc_root_dir
+from pymcbdsc import McbdscDownloader, McbdscDockerManager, pymcbdsc_root_dir
 
 
 # これはメインのファイルにのみ書く
@@ -25,23 +25,23 @@ def mkdir_if_needed(dir: str) -> None:
         os.makedirs(dir)
 
 
-def install(args: Namespace, downloader: McdbscDownloader) -> None:
+def install(args: Namespace, downloader: McbdscDownloader) -> None:
     root_dir = args.root_dir
     dl_dir = downloader.download_dir()
     mkdir_if_needed(root_dir)
     mkdir_if_needed(dl_dir)
 
 
-def uninstall(args: Namespace, downloader: McdbscDownloader) -> None:
+def uninstall(args: Namespace, downloader: McbdscDownloader) -> None:
     pass
 
 
-def download(args: Namespace, downloader: McdbscDownloader) -> None:
+def download(args: Namespace, downloader: McbdscDownloader) -> None:
     downloader.download_latest_version_zip_file_if_needed()
 
 
-def build(args: Namespace, downloader: McdbscDownloader) -> None:
-    manager = McdbscDockerManager(downloader=downloader)
+def build(args: Namespace, downloader: McbdscDownloader) -> None:
+    manager = McbdscDockerManager(downloader=downloader)
     b_version = args.bedrock_version if args.bedrock_version else downloader.latest_version()
     manager.build_image(version=b_version)
 
@@ -77,7 +77,7 @@ def main():
     if args.debug:
         logger.info("Set log level to DEBUG.")
         logger.setLevel(DEBUG)
-    dl = McdbscDownloader(pymcbdsc_root_dir=args.root_dir, agree_to_meula_and_pp=args.i_agree_to_meula_and_pp)
+    dl = McbdscDownloader(pymcbdsc_root_dir=args.root_dir, agree_to_meula_and_pp=args.i_agree_to_meula_and_pp)
     args.func(args, dl)
 
 

@@ -37,7 +37,7 @@ def pymcbdsc_root_dir():
     return r
 
 
-class McdbscDownloader(object):
+class McbdscDownloader(object):
     """ Bedrock Server の最新ファイルについてダウンロードし、管理するクラス。
 
     このクラスを利用するにあたっては、本モジュールのライセンスの他に Minecraft End User License Agreement
@@ -49,9 +49,9 @@ class McdbscDownloader(object):
 
     Examples:
 
-        >>> from pymcbdsc import McdbscDownloader
+        >>> from pymcbdsc import McbdscDownloader
         >>>
-        >>> downloader = McdbscDownloader()
+        >>> downloader = McbdscDownloader()
         >>> # You have to agree to the Minecraft End User License Agreement and Privacy Policy.
         >>> # See also:
         >>> #     * Minecraft End User License Agreement : https://account.mojang.com/terms
@@ -67,7 +67,7 @@ class McdbscDownloader(object):
                  zip_url_pat: str = ("https:\\/\\/minecraft\\.azureedge\\.net\\/bin-linux\\/"
                                      "bedrock-server-([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)\\.zip"),
                  agree_to_meula_and_pp: bool = False) -> None:
-        """ McdbscDownloader インスタンスの初期化メソッド。
+        """ McbdscDownloader インスタンスの初期化メソッド。
 
         Args:
             pymcbdsc_root_dir (str, optional): pymcbdsc が利用するディレクトリ(フォルダ). Defaults to pymcbdsc_root_dir().
@@ -275,13 +275,13 @@ class FailureAgreeMeulaAndPpError(Exception):
     pass
 
 
-class McdbscDockerManager(object):
+class McbdscDockerManager(object):
     """ Bedrock Server のコンテナとコンテナイメージの作成・管理を行うクラス。
     """
 
     def __init__(self,
                  docker_client: DockerClient = None,
-                 downloader: McdbscDownloader = McdbscDownloader(),
+                 downloader: McbdscDownloader = McbdscDownloader(),
                  dockerfile: str = "Dockerfile",
                  repository: str = "bedrock") -> None:
         """[summary]
@@ -289,7 +289,7 @@ class McdbscDockerManager(object):
         Args:
             docker_client (DockerClient, optional): Docker ホストに接続する DockerClient インスタンス.
                                                     None の場合は `docker.from_env()` の戻り値を利用する. Defaults to None.
-            downloader (McdbscDownloader, optional): [description]. Defaults to McdbscDownloader().
+            downloader (McbdscDownloader, optional): [description]. Defaults to McbdscDownloader().
             dockerfile (str, optional): [description]. Defaults to "Dockerfile".
             repository (str, optional): [description]. Defaults to "bedrock".
         """
@@ -357,10 +357,10 @@ class McdbscDockerManager(object):
         return dc_images.get(name=tag)
 
 
-class McdbscDockerContainer(object):
+class McbdscDockerContainer(object):
 
     def __init__(self,
-                 mcdbsc_manager: McdbscDockerManager) -> None:
+                 mcdbsc_manager: McbdscDockerManager) -> None:
         pass
 
     def start(self):
