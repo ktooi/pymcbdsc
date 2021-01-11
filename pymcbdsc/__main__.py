@@ -48,13 +48,14 @@ def build(args: Namespace, downloader: McbdscDownloader) -> None:
 
 def parse_args() -> Namespace:
     parser = ArgumentParser(description=("This project provides very easier setup and management "
-                                         "for Minecraft server (Bedrock Edition)."))
+                                         "for Minecraft Bedrock Dedicated Server."))
     parser.add_argument('-d', '--debug', action='store_true', help="Show verbose messages.")
     subparser = parser.add_subparsers()
 
     # 共通となる引数を定義。
     common_parser = ArgumentParser(add_help=False)
-    common_parser.add_argument('-r', '--root-dir', default=pymcbdsc_root_dir(), help="")
+    common_parser.add_argument('-r', '--root-dir', default=pymcbdsc_root_dir(),
+                               help="This directory is used for container management and storage of download files.")
     common_parser.add_argument('--i-agree-to-meula-and-pp', action='store_true',
                                help=("You have to agree to the MEULA and Privacy Policy at download the Bedrock Server. "
                                      "If you specify this argument, you agree to them."))
