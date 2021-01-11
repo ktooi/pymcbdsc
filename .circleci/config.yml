@@ -4,7 +4,7 @@ orbs:
   python: circleci/python@1.3.2
 
 jobs:
-  build-and-test:
+  build:
     executor: python/default
     steps:
       - checkout
@@ -15,16 +15,51 @@ jobs:
       - run:
           command: ./manage.py test
           name: Test
+      - save_cache:
+          key: v1-{{ .Branch }}-{{ .BuildNum }}
+          paths:
+            - ~/pymcbdsc.egg-info/
+            - ~/dist/
       - store_artifacts:
           path: dist
           destination: package
-#  test-py35:
-#    docker:
-#      - image: circleci/python:3.5
-#    steps:
+  python/test:
+    executor: python/default
+    steps:
+      - restore_cache:
+          key: v1-{{ .Branch }}-{{ .BuildNum }}
+      - python/install-packages
+      - run:
+          command: ./manage.py test
+          name: Test
 
 
 workflows:
   main:
     jobs:
-      - build-and-test
+      - build
+      - python/test:
+          name: test-py3.5
+          version: "3.5"
+          pkg-manager: pip
+          pip-dependency-file: pymcbdsc.egg-info/requires.txt
+      - python/test:
+          name: test-py3.6
+          version: "3.6"
+          pkg-manager: pip
+          pip-dependency-file: pymcbdsc.egg-info/requires.txt
+      - python/test:
+          name: test-py3.7
+          version: "3.7"
+          pkg-manager: pip
+          pip-dependency-file: pymcbdsc.egg-info/requires.txt
+      - python/test:
+          name: test-py3.8
+          version: "3.8"
+          pkg-manager: pip
+          pip-dependency-file: pymcbdsc.egg-info/requires.txt
+      - python/test:
+          name: test-py3.9
+          version: "3.9"
+          pkg-manager: pip
+          pip-dependency-file: pymcbdsc.egg-info/requires.txt
