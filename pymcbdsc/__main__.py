@@ -3,7 +3,7 @@
 詳細な利用方法はヘルプを参照してください。
 
 `python -m pymcbdsc -h`, `python -m pymcbdsc <subcommand> -h` 等で確認することができます。
-また、 pip でインストールした場合には `mcdbsc -h`, `mcdbsc <subcommand> -h` 等で確認することもできます。
+また、 pip でインストールした場合には `mcbdsc -h`, `mcbdsc <subcommand> -h` 等で確認することもできます。
 """
 
 import os

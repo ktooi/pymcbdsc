@@ -168,7 +168,7 @@ class McbdscDownloader(object):
         return downloads if relative else os.path.join(self._pymcbdsc_root_dir, downloads)
 
     def root_dir(self) -> str:
-        """ Pymcdbsc が利用するディレクトリ(フォルダ)のパスを戻すメソッド。
+        """ Pymcbdsc が利用するディレクトリ(フォルダ)のパスを戻すメソッド。
 
         Dockerfile や env-file, ダウンロードした Bedrock Server の Zip ファイルなどはこの配下に配置される。
 
@@ -177,7 +177,7 @@ class McbdscDownloader(object):
         The directory will contains Dockerfile, env-files and downloaded the Bedrock Server Zip file.
 
         Returns:
-            str: Pymcdbsc が利用するディレクトリ(フォルダ)のパス.
+            str: Pymcbdsc が利用するディレクトリ(フォルダ)のパス.
 
         Examples:
 
@@ -360,7 +360,7 @@ class McbdscDockerManager(object):
 class McbdscDockerContainer(object):
 
     def __init__(self,
-                 mcdbsc_manager: McbdscDockerManager) -> None:
+                 mcbdsc_manager: McbdscDockerManager) -> None:
         pass
 
     def start(self):

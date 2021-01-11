@@ -34,7 +34,7 @@ Docker (Windows の場合は [Docker Desktop for Windows](https://hub.docker.com
     または
 
     ```
-    mcdbsc install
+    mcbdsc install
     ```
 
 ## Authors
