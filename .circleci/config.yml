@@ -26,9 +26,6 @@ jobs:
   python/test:
     executor: python/default
     steps:
-      - restore_cache:
-          key: v1-{{ .Branch }}-{{ .BuildNum }}
-      - python/install-packages
       - run:
           command: ./manage.py test
           name: Test
@@ -43,23 +40,38 @@ workflows:
           version: "3.5"
           pkg-manager: pip
           pip-dependency-file: pymcbdsc.egg-info/requires.txt
+          setup:
+            - restore_cache:
+                key: v1-{{ .Branch }}-{{ .BuildNum }}
       - python/test:
           name: test-py3.6
           version: "3.6"
           pkg-manager: pip
           pip-dependency-file: pymcbdsc.egg-info/requires.txt
+          setup:
+            - restore_cache:
+                key: v1-{{ .Branch }}-{{ .BuildNum }}
       - python/test:
           name: test-py3.7
           version: "3.7"
           pkg-manager: pip
           pip-dependency-file: pymcbdsc.egg-info/requires.txt
+          setup:
+            - restore_cache:
+                key: v1-{{ .Branch }}-{{ .BuildNum }}
       - python/test:
           name: test-py3.8
           version: "3.8"
           pkg-manager: pip
           pip-dependency-file: pymcbdsc.egg-info/requires.txt
+          setup:
+            - restore_cache:
+                key: v1-{{ .Branch }}-{{ .BuildNum }}
       - python/test:
           name: test-py3.9
           version: "3.9"
           pkg-manager: pip
           pip-dependency-file: pymcbdsc.egg-info/requires.txt
+          setup:
+            - restore_cache:
+                key: v1-{{ .Branch }}-{{ .BuildNum }}
