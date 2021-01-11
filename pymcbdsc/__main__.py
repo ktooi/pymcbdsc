@@ -20,6 +20,13 @@ logger = getLogger(__name__)
 
 
 def mkdir_if_needed(dir: str) -> None:
+    """ 必要があればディレクトリ(フォルダ)を作成する関数。
+
+    指定されたディレクトリ(フォルダ)が既に存在すれば、作成しない。
+
+    Args:
+        dir (str): 作成するディレクトリ(フォルダ)のパス。
+    """
     if not os.path.exists(dir):
         logger.info("Create a directory: {dir}".format(dir=dir))
         os.makedirs(dir)
@@ -47,6 +54,11 @@ def build(args: Namespace, downloader: McbdscDownloader) -> None:
 
 
 def parse_args() -> Namespace:
+    """ 引数の定義と、解析を行う関数。
+
+    Returns:
+        Namespace: 解析済み引数。
+    """
     parser = ArgumentParser(description=("This project provides very easier setup and management "
                                          "for Minecraft Bedrock Dedicated Server."))
     parser.add_argument('-d', '--debug', action='store_true', help="Show verbose messages.")
