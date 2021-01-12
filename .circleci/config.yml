@@ -55,6 +55,10 @@ workflows:
           setup:
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
+          filters:
+            branches:
+              only:
+                - master
       - python/test:
           name: test-py3.7
           version: "3.7"
@@ -65,6 +69,10 @@ workflows:
           setup:
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
+          filters:
+            branches:
+              only:
+                - master
       - python/test:
           name: test-py3.8
           version: "3.8"
@@ -75,6 +83,10 @@ workflows:
           setup:
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
+          filters:
+            branches:
+              only:
+                - master
       - python/test:
           name: test-py3.9
           version: "3.9"
