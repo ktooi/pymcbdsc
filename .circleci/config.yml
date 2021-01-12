@@ -1,27 +1,99 @@
 version: 2.1
 
 orbs:
-  python: circleci/python@0.2.1
+  python: circleci/python@1.3.2
 
 jobs:
-  build-and-test:
+  build:
     executor: python/default
     steps:
       - checkout
-      - python/load-cache
-      - python/install-deps
-      - python/save-cache
-      - run:
-          command: ./setup.py bdist_wheel
-          name: Build
+      - python/dist
+      - python/install-packages:
+          pkg-manager: pip
+          pip-dependency-file: pymcbdsc.egg-info/requires.txt
       - run:
           command: ./manage.py test
           name: Test
+      - save_cache:
+          key: v1-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - pymcbdsc.egg-info/
+            - dist/
       - store_artifacts:
           path: dist
           destination: package
+  python/test:
+    executor: python/default
+    steps:
+      - run:
+          command: ./manage.py test
+          name: Test
+
 
 workflows:
   main:
     jobs:
-      - build-and-test
+      - build
+      - python/test:
+          name: test-py3.5
+          version: "3.5"
+          requires:
+            - build
+          pkg-manager: pip
+          pip-dependency-file: pymcbdsc.egg-info/requires.txt
+          setup:
+            - restore_cache:
+                key: v1-{{ .Branch }}-{{ .Revision }}
+      - python/test:
+          name: test-py3.6
+          version: "3.6"
+          requires:
+            - build
+          pkg-manager: pip
+          pip-dependency-file: pymcbdsc.egg-info/requires.txt
+          setup:
+            - restore_cache:
+                key: v1-{{ .Branch }}-{{ .Revision }}
+          filters:
+            branches:
+              only:
+                - master
+      - python/test:
+          name: test-py3.7
+          version: "3.7"
+          requires:
+            - build
+          pkg-manager: pip
+          pip-dependency-file: pymcbdsc.egg-info/requires.txt
+          setup:
+            - restore_cache:
+                key: v1-{{ .Branch }}-{{ .Revision }}
+          filters:
+            branches:
+              only:
+                - master
+      - python/test:
+          name: test-py3.8
+          version: "3.8"
+          requires:
+            - build
+          pkg-manager: pip
+          pip-dependency-file: pymcbdsc.egg-info/requires.txt
+          setup:
+            - restore_cache:
+                key: v1-{{ .Branch }}-{{ .Revision }}
+          filters:
+            branches:
+              only:
+                - master
+      - python/test:
+          name: test-py3.9
+          version: "3.9"
+          requires:
+            - build
+          pkg-manager: pip
+          pip-dependency-file: pymcbdsc.egg-info/requires.txt
+          setup:
+            - restore_cache:
+                key: v1-{{ .Branch }}-{{ .Revision }}
