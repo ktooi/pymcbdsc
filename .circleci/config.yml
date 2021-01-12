@@ -39,7 +39,7 @@ workflows:
           name: test-py3.5
           version: "3.5"
           pkg-manager: pip
-          pip-dependency-file: pymcbdsc.egg-info/requires.txt
+          pip-dependency-file: ~/pymcbdsc.egg-info/requires.txt
           setup:
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
@@ -47,7 +47,7 @@ workflows:
           name: test-py3.6
           version: "3.6"
           pkg-manager: pip
-          pip-dependency-file: pymcbdsc.egg-info/requires.txt
+          pip-dependency-file: ~/pymcbdsc.egg-info/requires.txt
           setup:
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
@@ -55,7 +55,7 @@ workflows:
           name: test-py3.7
           version: "3.7"
           pkg-manager: pip
-          pip-dependency-file: pymcbdsc.egg-info/requires.txt
+          pip-dependency-file: ~/pymcbdsc.egg-info/requires.txt
           setup:
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
@@ -63,7 +63,7 @@ workflows:
           name: test-py3.8
           version: "3.8"
           pkg-manager: pip
-          pip-dependency-file: pymcbdsc.egg-info/requires.txt
+          pip-dependency-file: ~/pymcbdsc.egg-info/requires.txt
           setup:
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
@@ -71,7 +71,7 @@ workflows:
           name: test-py3.9
           version: "3.9"
           pkg-manager: pip
-          pip-dependency-file: pymcbdsc.egg-info/requires.txt
+          pip-dependency-file: ~/pymcbdsc.egg-info/requires.txt
           setup:
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
