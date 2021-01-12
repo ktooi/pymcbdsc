@@ -38,40 +38,50 @@ workflows:
       - python/test:
           name: test-py3.5
           version: "3.5"
+          requires:
+            - build
           pkg-manager: pip
-          pip-dependency-file: ../pymcbdsc.egg-info/requires.txt
+          pip-dependency-file: pymcbdsc.egg-info/requires.txt
           setup:
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
       - python/test:
           name: test-py3.6
           version: "3.6"
+          requires:
+            - build
           pkg-manager: pip
-          pip-dependency-file: ../pymcbdsc.egg-info/requires.txt
+          pip-dependency-file: pymcbdsc.egg-info/requires.txt
           setup:
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
       - python/test:
           name: test-py3.7
           version: "3.7"
+          requires:
+            - build
           pkg-manager: pip
-          pip-dependency-file: ../pymcbdsc.egg-info/requires.txt
+          pip-dependency-file: pymcbdsc.egg-info/requires.txt
           setup:
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
       - python/test:
           name: test-py3.8
           version: "3.8"
+          requires:
+            - build
           pkg-manager: pip
-          pip-dependency-file: ../pymcbdsc.egg-info/requires.txt
+          pip-dependency-file: pymcbdsc.egg-info/requires.txt
           setup:
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
       - python/test:
           name: test-py3.9
           version: "3.9"
+          requires:
+            - build
           pkg-manager: pip
-          pip-dependency-file: ../pymcbdsc.egg-info/requires.txt
+          pip-dependency-file: pymcbdsc.egg-info/requires.txt
           setup:
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
