@@ -18,8 +18,8 @@ jobs:
       - save_cache:
           key: v1-{{ .Branch }}-{{ .Revision }}
           paths:
-            - ~/pymcbdsc.egg-info/
-            - ~/dist/
+            - pymcbdsc.egg-info/
+            - dist/
       - store_artifacts:
           path: dist
           destination: package
