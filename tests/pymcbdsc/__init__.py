@@ -4,6 +4,11 @@ import pymcbdsc
 import re
 import os
 import shutil
+from sys import version_info
+from logging import getLogger
+
+
+logger = getLogger(__name__)
 
 
 os_name2root_dir = {"posix": "/var/lib/pymcbdsc",
@@ -25,6 +30,38 @@ class TestCommon(unittest.TestCase):
             self._test_pymcbdsc_root_dir(os_name, exp_root_dir)
 
 
+def stop_patcher(patcher, patcher_name=None):
+    """ mock.patch を停止する関数。
+
+    Python3.5, 3.6, 3.7 では、既に `stop()` をコールした patch で再度 `stop()` をコールすると
+    次のような Exception が Raise されてしまうので、その対処を行う。
+
+    >>> patcher = mock.patch('hoge')
+    >>> patcher.start()
+    >>> patcher.stop()
+    >>> patcher.stop()  # すでに `stop()` をコールした patch で再度 `stop()` をコールする。
+    Traceback (most recent call last):
+    ...snip...
+    RuntimeError: stop called on unstarted patcher
+
+    一度 `stop()` をコールした patch からは "is_local" 属性がなくなるので、 "is_local" 属性の有無で
+    patch の `stop()` をコールするか否かを判断する。ハック的だがやり方として問題ないかは知らん。
+
+    なお、 Python3.8, 3.9 では `stop()` をコールした patch で再度 `stop()` しても問題はないので、
+    このハックは利用せずに、何も気にしないで `stop()` をコールする。
+    """
+    (major, minor) = version_info[0:2]
+    if major == 3 and (minor >= 5 and minor <= 7):  # Python3.5, 3.6, 3.7 のみハックを利用。
+        if hasattr(patcher, "is_local"):
+            patcher.stop()
+        else:
+            if patcher_name is None:
+                patcher_name = patcher.attribute
+            logger.info("Trying stop a patcher named {name} but it was already stopped.".format(name=patcher_name))
+    else:  # Python3.5, 3.6, 3.7 以外はハックを利用しない。
+        patcher.stop()
+
+
 class TestMcbdscDownloader(unittest.TestCase):
 
     os_name2test_root_dir = {"posix": "/tmp/test/pymcbdsc",
@@ -41,8 +78,8 @@ class TestMcbdscDownloader(unittest.TestCase):
         self.mcbdsc = pymcbdsc.McbdscDownloader(pymcbdsc_root_dir=test_dir)
 
     def tearDown(self) -> None:
-        self.patcher_docker.stop()
-        self.patcher_requests.stop()
+        stop_patcher(self.patcher_docker)
+        stop_patcher(self.patcher_requests)
         shutil.rmtree(self.os_name2test_root_dir[os.name])
 
     def test_root_dir(self) -> None:
