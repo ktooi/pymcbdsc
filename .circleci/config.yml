@@ -58,7 +58,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - main
       - python/test:
           name: test-py3.7
           version: "3.7"
@@ -72,7 +72,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - main
       - python/test:
           name: test-py3.8
           version: "3.8"
@@ -86,7 +86,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - main
       - python/test:
           name: test-py3.9
           version: "3.9"
