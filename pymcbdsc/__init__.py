@@ -329,7 +329,7 @@ class McbdscDockerManager(object):
             list: McbdscDockerContainer インスタンスのリスト。
         """
         if not hasattr(self, "_containers"):
-            containers_param: list = self._containers_param
+            containers_param = self._containers_param
             containers = []
             docker_client = self._docker_client
             for container_param in containers_param:
