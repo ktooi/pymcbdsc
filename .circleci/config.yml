@@ -36,13 +36,16 @@ jobs:
       - restore_cache:
           key: v1-{{ .Branch }}-{{ .Revision }}
       - run:
+          command: pip install twine
+          name: install twine
+      - run:
           command: |
             echo -e "[pypi]" > ~/.pypirc
             echo -e "username = __token__" >> ~/.pypirc
             echo -e "password = $PYPI_TOKEN" >> ~/.pypirc
           name: Create .pypirc
       - run:
-          command: ./setup.py bdist_wheel upload
+          command: twine upload dist/*
           name: Upload
 
 
