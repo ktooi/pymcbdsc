@@ -71,14 +71,11 @@ class TestMcbdscDownloader(unittest.TestCase):
         test_dir = self.os_name2test_root_dir[os.name]
         os.makedirs(test_dir)
         self.test_dir = test_dir
-        self.patcher_docker = mock.patch('pymcbdsc.docker')
         self.patcher_requests = mock.patch('pymcbdsc.requests')
-        self.mock_docker = self.patcher_docker.start()
         self.mock_requests = self.patcher_requests.start()
         self.mcbdsc = pymcbdsc.McbdscDownloader(pymcbdsc_root_dir=test_dir)
 
     def tearDown(self) -> None:
-        stop_patcher(self.patcher_docker)
         stop_patcher(self.patcher_requests)
         shutil.rmtree(self.os_name2test_root_dir[os.name])
 
