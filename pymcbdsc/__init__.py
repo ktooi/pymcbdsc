@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 import docker
 from docker.client import DockerClient
 import requests
@@ -440,7 +440,7 @@ class McbdscDockerManager(object):
         """
         versions.sort(key=lambda s: list(map(int, s.split('.'))), reverse=reverse)
 
-    def get_bds_latest_version_from_local_file(self) -> str:
+    def get_bds_latest_version_from_local_file(self) -> Optional[str]:
         """ ローカルに保存されている BDS Zip ファイルの中で最も新しいバージョンを戻すメソッド。
 
         Returns:
