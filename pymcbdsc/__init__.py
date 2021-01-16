@@ -290,7 +290,7 @@ class McbdscDockerManager(object):
     """
 
     def __init__(self,
-                 containers_param: List[dict],
+                 containers_param: List[dict] = None,
                  pymcbdsc_root_dir: str = pymcbdsc_root_dir(),
                  docker_client: DockerClient = None,
                  dockerfile: str = "Dockerfile",
@@ -299,7 +299,8 @@ class McbdscDockerManager(object):
         """[summary]
 
         Args:
-            containers_param (List[dict]): 管理する全コンテナのパラメータ.
+            containers_param (List[dict], optional): 管理する全コンテナのパラメータ.
+                                                     None の場合は、空のリストになる. Defaults to None.
             pymcbdsc_root_dir (str, optional): pymcbdsc が利用するディレクトリ(フォルダ).
                                                Defaults to pymcbdsc_root_dir().
             docker_client (DockerClient, optional): Docker ホストに接続する DockerClient インスタンス.
@@ -310,8 +311,17 @@ class McbdscDockerManager(object):
                                          pymcbdsc_root_dir の配下にあるこの名前のディレクトリ内の BDS Zip ファイルを利用する。
                                          Defaults to "downloads".
             repository (str, optional): [description]. Defaults to "bedrock".
+
+        Examples:
+
+        >>> import docker
+        >>> from pymcbdsc import McbdscDownloader, McbdscDockerManager
+        >>>
+        >>> downloader = McbdscDownloader()
+        >>> docker_client = docker.from_env()
+        >>> manager = McbdscDockerManager(docker_client=docker_client, bds_zip_dir=downloader.download_dir(relative=True))
         """
-        self._containers_param = containers_param
+        self._containers_param = containers_param if containers_param is not None else []
         self._root_dir = pymcbdsc_root_dir
         # 引数のデフォルト値を下記のようにすると、 unittest で import した際に docker.from_env() がコールされてしまい
         # import することも patch することもできない。
