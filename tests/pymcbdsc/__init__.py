@@ -88,6 +88,7 @@ class TestMcbdscDownloader(unittest.TestCase):
         # OS 毎の初期値を試験するのは難しい。
         # 初期値を決定する pymcbdsc.pymcbdsc_root_dir() 関数の試験は別途行っているので、
         # その試験結果を以て OS 毎の初期値は問題ないものとする。
+        # よって、ここではこのテストケースを実行した OS の初期値が戻ることのみを確認する。
         exp = os_name2root_dir[os.name]
         self.assertEqual(act, exp)
 
