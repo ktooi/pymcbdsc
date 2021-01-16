@@ -7,6 +7,8 @@
 """
 
 import os
+import sys
+import shutil
 from logging import basicConfig, getLogger, DEBUG, INFO
 from argparse import ArgumentParser, Namespace
 from pymcbdsc import McbdscDownloader, McbdscDockerManager, pymcbdsc_root_dir
@@ -32,11 +34,23 @@ def mkdir_if_needed(dir: str) -> None:
         os.makedirs(dir)
 
 
+def copy_if_not_exists(src_file: str, dest_file: str) -> None:
+    if not os.path.exists(dest_file):
+        logger.info("Copy a file: src: {src_file}, dest: {dest_file}".format(src_file=src_file, dest_file=dest_file))
+        shutil.copyfile(src_file, dest_file)
+
+
 def install(args: Namespace, downloader: McbdscDownloader) -> None:
     root_dir = args.root_dir
     dl_dir = downloader.download_dir()
     mkdir_if_needed(root_dir)
     mkdir_if_needed(dl_dir)
+
+    data_files_dir = os.path.join(sys.prefix, "share", "mcbdsc")
+    df_docker_dir = os.path.join(data_files_dir, "docker")
+    copy_if_not_exists(src_file=os.path.join(df_docker_dir, "Dockerfile"), dest_file=os.path.join(root_dir, "Dockerfile"))
+    copy_if_not_exists(src_file=os.path.join(df_docker_dir, "entrypoint.sh"),
+                       dest_file=os.path.join(root_dir, "entrypoint.sh"))
 
 
 def uninstall(args: Namespace, downloader: McbdscDownloader) -> None:
@@ -48,8 +62,9 @@ def download(args: Namespace, downloader: McbdscDownloader) -> None:
 
 
 def build(args: Namespace, downloader: McbdscDownloader) -> None:
-    manager = McbdscDockerManager(downloader=downloader)
-    b_version = args.bedrock_version if args.bedrock_version else downloader.latest_version()
+    root_dir = args.root_dir
+    manager = McbdscDockerManager(pymcbdsc_root_dir=root_dir)
+    b_version = args.bedrock_version if args.bedrock_version else manager.get_bds_latest_version_from_local_file()
     manager.build_image(version=b_version)
 
 
