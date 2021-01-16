@@ -49,7 +49,10 @@ jobs:
 workflows:
   main:
     jobs:
-      - build
+      - build:
+          filters:
+            tags:
+              only: /.*/
       - python/test:
           name: test-py3.5
           version: "3.5"
@@ -60,6 +63,9 @@ workflows:
           setup:
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
+          filters:
+            tags:
+              only: /.*/
       - python/test:
           name: test-py3.6
           version: "3.6"
@@ -74,6 +80,8 @@ workflows:
             branches:
               only:
                 - main
+            tags:
+              only: /.*/
       - python/test:
           name: test-py3.7
           version: "3.7"
@@ -88,6 +96,8 @@ workflows:
             branches:
               only:
                 - main
+            tags:
+              only: /.*/
       - python/test:
           name: test-py3.8
           version: "3.8"
@@ -102,6 +112,8 @@ workflows:
             branches:
               only:
                 - main
+            tags:
+              only: /.*/
       - python/test:
           name: test-py3.9
           version: "3.9"
@@ -112,6 +124,9 @@ workflows:
           setup:
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
+          filters:
+            tags:
+              only: /.*/
       - register:
           name: register
           requires:
