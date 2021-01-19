@@ -53,13 +53,16 @@ Docker (Windows の場合は [Docker Desktop for Windows](https://hub.docker.com
 
 **Tag**
 
-本モジュールは Docker Image に次の3種類のタグを付与します。
+BDS (というか、 Minecraft) のバージョニングは `major.minor.patch.revision` となっております。
+本モジュールでは、作成した Docker Image に対してこの BDS のバージョンをもとに Tag の付与を行います。
+
+本モジュールが付与する Tag は次の3種類です。
 
 |タグの種類|意味|例|
 |----|----|----|
 |latest|最新の BDS バージョンのイメージを指します。|latest|
-|リリースバージョン|メジャー、マイナー、パッチ、リビジョンすべてを含み、各 BDS バージョンのイメージを指します。|1.16.201.02|
-|マイナーバージョン|メジャー、マイナー毎に作成され、各 BDS マイナーバージョンの最新イメージを指します。|1.16|
+|minor|`major.minor` 毎に作成され、各 BDS マイナーバージョンの最新イメージを指します。|1.16|
+|revision|`major.minor.patch.revision` すべてを含み、各 BDS バージョンのイメージを指します。|1.16.201.02|
 
 ## Authors
 
