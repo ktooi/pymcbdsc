@@ -37,6 +37,12 @@ def parse_args() -> Namespace:
     subcmd_test = subparsers.add_parser('test')
     subcmd_test.set_defaults(func=test)
 
+    subcmd_vercheck = subparsers.add_parser('vercheck')
+    subcmd_vercheck_ver_grp = subcmd_vercheck.add_mutually_exclusive_group()
+    subcmd_vercheck_ver_grp.add_argument("-V", "--version", dest="version", type=str)
+    subcmd_vercheck_ver_grp.add_argument("-e", "--environment", dest="environment", type=str)
+    subcmd_vercheck.set_defaults(func=vercheck)
+
     return parser.parse_args()
 
 
