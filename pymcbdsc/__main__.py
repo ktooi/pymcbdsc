@@ -65,7 +65,14 @@ def build(args: Namespace, downloader: McbdscDownloader) -> None:
     root_dir = args.root_dir
     manager = McbdscDockerManager(pymcbdsc_root_dir=root_dir)
     b_version = args.bedrock_version if args.bedrock_version else manager.get_bds_latest_version_from_local_file()
-    manager.build_image(version=b_version)
+    available_versions = manager.get_bds_versions_from_local_file()
+    if b_version in available_versions:
+        manager.build_image(version=b_version)
+        manager.set_latest_tag_to_latest_image()
+        manager.set_minor_tags()
+    else:
+        logger.error('The version specified is "{version}", but the available versions are as follows: {available_versions}'
+                     .format(version=b_version, available_versions=", ".join(available_versions)))
 
 
 def parse_args() -> Namespace:
