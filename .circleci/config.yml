@@ -38,6 +38,9 @@ jobs:
           name: check version and tag
       - restore_cache:
           key: v1-{{ .Branch }}-{{ .Revision }}
+      - python/install-packages:
+          pkg-manager: pip
+          pip-dependency-file: pymcbdsc.egg-info/requires.txt
       - run:
           command: pip install twine
           name: install twine
