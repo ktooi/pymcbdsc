@@ -1,5 +1,6 @@
 from typing import List, Optional
 import docker
+from docker.models.containers import Container
 from docker.client import DockerClient
 import requests
 import re
@@ -9,12 +10,14 @@ from os import listdir
 # >>> os_name = "posix"
 # >>> p = mock.patch('pymcbdsc.os_name', os_name)
 from os import name as os_name
+from logging import getLogger
 
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
-
-bds_zip_file_pat = "bedrock-server-([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)\\.zip"
+logger = getLogger(__name__)
+bds_version_pat = "[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+"
+bds_zip_file_pat = "bedrock-server-({version_pat})\\.zip".format(version_pat=bds_version_pat)
 
 
 def pymcbdsc_root_dir():
@@ -289,6 +292,8 @@ class McbdscDockerManager(object):
     McbdsDockerContainer インスタンスを管理・制御することです。
     """
 
+    bds_version_pat_compile = re.compile(bds_version_pat)
+
     def __init__(self,
                  containers_param: List[dict] = None,
                  pymcbdsc_root_dir: str = pymcbdsc_root_dir(),
@@ -339,13 +344,25 @@ class McbdscDockerManager(object):
             list: McbdscDockerContainer インスタンスのリスト。
         """
         if not hasattr(self, "_containers"):
+            dc_containers = self._docker_client.containers
+            exist_containers = dc_containers.list(all=True)
+            # name から container インスタンスを取得できる dict を作成。
+            name2container = {c.name: c for c in exist_containers}
             containers_param = self._containers_param
-            containers = []
-            docker_client = self._docker_client
+            mcbdsc_containers = []
             for container_param in containers_param:
-                container = McbdscDockerContainer(docker_client=docker_client, **container_param)
-                containers.append(container)
-            self._containers = containers
+                name = container_param["name"]
+                if name in name2container:
+                    # コンテナが作成済みあればそのインスタンスを指定。
+                    container = name2container[name]
+                else:
+                    # コンテナが未作成であれば作成。
+                    container = dc_containers.create(**container_param)
+                # start 時に処理が停止してしまうため、 detach オプションを強制的に有効。
+                container_param["detach"] = True
+                mcbdsc_container = McbdscDockerContainer(name=name, container=container)
+                mcbdsc_containers.append(mcbdsc_container)
+            self._containers = mcbdsc_containers
         return self._containers
 
     def build_image(self, version: str = None, extra_buildargs: dict = None, **extra_build_opt):
@@ -370,6 +387,7 @@ class McbdscDockerManager(object):
         if extra_buildargs is not None:
             buildargs.update(extra_buildargs)
         tag = "{repository}:{version}".format(repository=self._repository, version=version)
+        logger.info("Build image: {tag}".format(tag=tag))
         return dc_images.build(path=root_dir, dockerfile=dockerfile, buildargs=buildargs, tag=tag, **extra_build_opt)
 
     def get_image(self, version: str = None):
@@ -388,6 +406,63 @@ class McbdscDockerManager(object):
             version = self.get_bds_latest_version_from_local_file()
         tag = "{repository}:{version}".format(repository=self._repository, version=version)
         return dc_images.get(name=tag)
+
+    def list_images(self):
+        dc_images = self._docker_client.images
+        repository = self._repository
+        return dc_images.list(repository)
+
+    def set_tag(self, version, tag) -> bool:
+        logger.info("Set tag \"{tag}\" to version: {version}".format(tag=tag, version=version))
+        image = self.get_image(version=version)
+        return image.tag(repository=self._repository, tag=tag)
+
+    def set_latest_tag_to_latest_image(self) -> bool:
+        latest_version = self.get_bds_versions_from_container_image(sort=True, reverse=False)[-1]
+        return self.set_tag(version=latest_version, tag="latest")
+
+    def set_minor_tags(self):
+        """ 各マイナーバージョン毎のタグを作成し、それぞれのマイナーバージョンの最新バージョンのコンテナイメージに付与するメソッド。
+
+        このメソッドは、 BDS のバージョンを取得する為に Docker Image の一覧を使用するので、
+        あらかじめ必要な Docker Image が Build されている必要があります。
+
+        BDS のバージョニングは次のようになっています。
+
+        major.minor.patch.revision
+
+        このうち、 minor 部までのタグ(e.g., 1.16)を各マイナーバージョンごとに作成し、
+        それぞれのマイナーバージョンの最新バージョンの Docker Image にそのタグを付与します。
+
+        これにより、コンテナ作成時にマイナーバージョンまでを指定してコンテナを起動することが可能となります。
+        例えば 1.16 のマイナーバージョンの Docker Image を使用するように指定されたコンテナは、
+        1.16 の最新バージョンで動作し続けますが、バージョン 1.17 以上に更新されることはありません。
+        """
+        versions = self.get_bds_versions_from_container_image(sort=True, reverse=False)
+        # マイナーバージョンと、その最新パッチ(またはリビジョン)の組み合わせを作る。
+        d = {}
+        for version in versions:
+            # version が "1.2.3.4" なら major_minor には "1.2" が入る。
+            major_minor = ".".join(version.split(".")[0:2])
+            # versions は昇順なので、特に条件式を入れなくても
+            # マイナーバージョンとその最新パッチ(またはリビジョン)の組み合わせになる。
+            d[major_minor] = version
+        for (major_minor, version) in d.items():
+            self.set_tag(version=version, tag=major_minor)
+
+    def get_bds_versions_from_container_image(self, sort=True, reverse=False) -> List[str]:
+        images = self.list_images()
+        versions = []
+        for image in images:
+            for tag in image.tags:
+                version = tag.split(":")[1]
+                m = self.bds_version_pat_compile.fullmatch(version)
+                if not m:
+                    continue
+                versions.append(version)
+        if sort:
+            self.sort_bds_versions(versions, reverse)
+        return versions
 
     def get_bds_versions_from_local_file(self, sort=True, reverse=False) -> List[str]:
         """ ローカルに保存されている BDS Zip ファイルからバージョンの一覧を戻すメソッド。
@@ -465,10 +540,14 @@ class McbdscDockerManager(object):
 
 
 class McbdscDockerContainer(object):
+    """[summary]
+    """
 
     def __init__(self,
-                 mcbdsc_manager: McbdscDockerManager) -> None:
-        pass
+                 name: str,
+                 container: Container) -> None:
+        self._name = name
+        self._container = container
 
     def start(self):
         pass
@@ -485,7 +564,7 @@ class McbdscDockerContainer(object):
     def status(self):
         pass
 
-    def backup(self):
+    def backup(self, online=False):
         pass
 
     def restore(self):

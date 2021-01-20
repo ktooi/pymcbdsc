@@ -2,27 +2,51 @@
 # -*- coding: utf-8 -*-
 import os
 import unittest
-from argparse import ArgumentParser
+from logging import basicConfig, getLogger, INFO
+from argparse import ArgumentParser, Namespace
 
 
-def test(args):
+# これはメインのファイルにのみ書く
+basicConfig(level=INFO)
+
+# これはすべてのファイルに書く
+logger = getLogger(__name__)
+
+
+def test(args: Namespace) -> bool:
     runner = unittest.TextTestRunner()
     test_suite = unittest.defaultTestLoader.discover(start_dir="tests", top_level_dir=os.getcwd())
     test_result = runner.run(test_suite)
     return test_result.wasSuccessful()
 
 
-def parse_args():
-    parser = ArgumentParser()
-    subparser = parser.add_subparsers()
+def vercheck(args: Namespace) -> bool:
+    version = os.environ[args.environment] if args.environment else args.version
+    from pymcbdsc import __version__ as pymcbdsc_version
+    act_version = "v{version}".format(version=pymcbdsc_version)
+    logger.info("Pymcbdsc version: {act_version}, Provided version: {exp_version}"
+                .format(act_version=act_version, exp_version=version))
+    return act_version == version
 
-    parser_test = subparser.add_parser('test')
-    parser_test.set_defaults(func=test)
+
+def parse_args() -> Namespace:
+    parser = ArgumentParser()
+    subparsers = parser.add_subparsers()
+    subparsers.required = True
+
+    subcmd_test = subparsers.add_parser('test')
+    subcmd_test.set_defaults(func=test)
+
+    subcmd_vercheck = subparsers.add_parser('vercheck')
+    subcmd_vercheck_ver_grp = subcmd_vercheck.add_mutually_exclusive_group()
+    subcmd_vercheck_ver_grp.add_argument("-V", "--version", dest="version", type=str)
+    subcmd_vercheck_ver_grp.add_argument("-e", "--environment", dest="environment", type=str)
+    subcmd_vercheck.set_defaults(func=vercheck)
 
     return parser.parse_args()
 
 
-def main():
+def main() -> bool:
     args = parse_args()
     return args.func(args)
 

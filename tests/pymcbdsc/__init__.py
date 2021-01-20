@@ -226,6 +226,21 @@ class TestMcbdscDockerManager(unittest.TestCase):
     def test_get_image(self) -> None:
         pass
 
+    def test_list_images(self) -> None:
+        pass
+
+    def test_set_tag(self) -> None:
+        pass
+
+    def test_set_latest_tag_to_latest_image(self) -> None:
+        pass
+
+    def test_set_minor_tags(self) -> None:
+        pass
+
+    def test_get_bds_versions_from_container_image(self) -> None:
+        pass
+
     def _dummy_bds(self) -> List:
         return (["bedrock-server-1.0.0.0.zip",
                  "bedrock-server-1.1.1.1.zip",

@@ -33,6 +33,9 @@ jobs:
     executor: python/default
     steps:
       - checkout
+      - run:
+          command: ./manage.py vercheck -e CIRCLE_TAG
+          name: check version and tag
       - restore_cache:
           key: v1-{{ .Branch }}-{{ .Revision }}
       - run:
