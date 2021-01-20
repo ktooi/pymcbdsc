@@ -75,6 +75,13 @@ def build(args: Namespace, downloader: McbdscDownloader) -> None:
                      .format(version=b_version, available_versions=", ".join(available_versions)))
 
 
+def create(args: Namespace, downloader: McbdscDownloader) -> None:
+    root_dir = args.root_dir
+    containers_params = [{"name": "mbdsc_test", "image": "bedrock:latest"}]
+    manager = McbdscDockerManager(pymcbdsc_root_dir=root_dir, containers_param=containers_params)
+    manager.factory_containers()
+
+
 def parse_args() -> Namespace:
     """ 引数の定義と、解析を行う関数。
 
@@ -109,6 +116,10 @@ def parse_args() -> Namespace:
     subcmd_build.add_argument('-V', '--bedrock-version')
     subcmd_build.set_defaults(func=build)
 
+    subcmd_create = subparsers.add_parser("create", parents=[common_parser],
+                                          help="TODO")
+    subcmd_create.set_defaults(func=create)
+
     # 以下、ヘルプコマンドの定義。
 
     # "help" 以外の subcommand のリストを保持する。
@@ -136,7 +147,7 @@ def main():
     if args.debug:
         logger.info("Set log level to DEBUG.")
         logger.setLevel(DEBUG)
-    if args.subcommand in ["install", "download", "build"]:
+    if args.subcommand in ["install", "download", "build", "create"]:
         dl = McbdscDownloader(pymcbdsc_root_dir=args.root_dir, agree_to_meula_and_pp=args.i_agree_to_meula_and_pp)
         args.func(args, dl)
     else:

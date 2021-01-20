@@ -1,5 +1,6 @@
 from typing import List, Optional
 import docker
+from docker.models.containers import Container
 from docker.client import DockerClient
 import requests
 import re
@@ -343,13 +344,25 @@ class McbdscDockerManager(object):
             list: McbdscDockerContainer インスタンスのリスト。
         """
         if not hasattr(self, "_containers"):
+            dc_containers = self._docker_client.containers
+            exist_containers = dc_containers.list(all=True)
+            # name から container インスタンスを取得できる dict を作成。
+            name2container = {c.name: c for c in exist_containers}
             containers_param = self._containers_param
-            containers = []
-            docker_client = self._docker_client
+            mcbdsc_containers = []
             for container_param in containers_param:
-                container = McbdscDockerContainer(docker_client=docker_client, **container_param)
-                containers.append(container)
-            self._containers = containers
+                name = container_param["name"]
+                if name in name2container:
+                    # コンテナが作成済みあればそのインスタンスを指定。
+                    container = name2container[name]
+                else:
+                    # コンテナが未作成であれば作成。
+                    container = dc_containers.create(**container_param)
+                # start 時に処理が停止してしまうため、 detach オプションを強制的に有効。
+                container_param["detach"] = True
+                mcbdsc_container = McbdscDockerContainer(name=name, container=container)
+                mcbdsc_containers.append(mcbdsc_container)
+            self._containers = mcbdsc_containers
         return self._containers
 
     def build_image(self, version: str = None, extra_buildargs: dict = None, **extra_build_opt):
@@ -532,13 +545,9 @@ class McbdscDockerContainer(object):
 
     def __init__(self,
                  name: str,
-                 docker_client: DockerClient = None) -> None:
+                 container: Container) -> None:
         self._name = name
-        # 引数のデフォルト値を下記のようにすると、 unittest で import した際に docker.from_env() がコールされてしまい
-        # import することも patch することもできない。
-        # docker_client: DockerClient = docker.from_env()
-        # このため、デフォルト値を None としておき、 None の場合に docker.from_env() をコールする。
-        self._docker_client = docker.from_env() if docker_client is None else docker_client
+        self._container = container
 
     def start(self):
         pass
