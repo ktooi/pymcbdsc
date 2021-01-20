@@ -33,14 +33,14 @@ jobs:
     executor: python/default
     steps:
       - checkout
-      - run:
-          command: ./manage.py vercheck -e CIRCLE_TAG
-          name: check version and tag
       - restore_cache:
           key: v1-{{ .Branch }}-{{ .Revision }}
       - python/install-packages:
           pkg-manager: pip
           pip-dependency-file: pymcbdsc.egg-info/requires.txt
+      - run:
+          command: ./manage.py vercheck -e CIRCLE_TAG
+          name: check version and tag
       - run:
           command: pip install twine
           name: install twine
