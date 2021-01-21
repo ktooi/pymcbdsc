@@ -58,4 +58,4 @@ do
   [ ! -L ./${__file} ] && ln -s /volume/${__file} ./${__file}
 done
 
-./${BEDROCK_SERVER_BIN:-"bedrock_server"}
+exec ./${BEDROCK_SERVER_BIN:-"bedrock_server"}
