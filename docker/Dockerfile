@@ -7,7 +7,7 @@ COPY ${BEDROCK_SERVER_DIR}/bedrock-server-${BEDROCK_SERVER_VER}.zip .
 RUN mkdir -pv /usr/local/src/bedrock && unzip bedrock-server-$BEDROCK_SERVER_VER.zip -d /usr/local/src/bedrock
 
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 ENV LD_LIBRARY_PATH=/opt/bedrock
 RUN apt-get update && apt-get install -y \
   libcurl4
