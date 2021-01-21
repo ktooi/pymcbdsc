@@ -13,7 +13,7 @@ from os import name as os_name
 from logging import getLogger
 
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 logger = getLogger(__name__)
 bds_version_pat = "[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+"
@@ -549,20 +549,24 @@ class McbdscDockerContainer(object):
         self._name = name
         self._container = container
 
-    def start(self):
-        pass
+    def start(self, **kwargs):
+        container = self._container
+        container.start(**kwargs)
 
-    def stop(self):
-        pass
+    def stop(self, **kwargs):
+        container = self._container
+        container.stop(**kwargs)
 
-    def run(self):
-        pass
+    def restart(self, **kwargs):
+        container = self._container
+        container.restart(**kwargs)
 
     def remove(self):
         pass
 
-    def status(self):
-        pass
+    def stats(self, **kwargs):
+        container = self._container
+        container.stats(**kwargs)
 
     def backup(self, online=False):
         pass
