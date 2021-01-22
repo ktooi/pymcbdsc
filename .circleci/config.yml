@@ -13,7 +13,7 @@ jobs:
           pkg-manager: pip
           pip-dependency-file: pymcbdsc.egg-info/requires.txt
       - run:
-          command: ./manage.py test
+          command: ./setup.py test
           name: Test
       - save_cache:
           key: v1-{{ .Branch }}-{{ .Revision }}
@@ -27,7 +27,7 @@ jobs:
     executor: python/default
     steps:
       - run:
-          command: ./manage.py test
+          command: ./setup.py test
           name: Test
   register:
     executor: python/default
