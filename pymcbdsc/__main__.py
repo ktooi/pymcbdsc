@@ -82,6 +82,13 @@ def create(args: Namespace, downloader: McbdscDownloader) -> None:
     manager.factory_containers()
 
 
+def start(args: Namespace, downloader: McbdscDownloader) -> None:
+    root_dir = args.root_dir
+    containers_params = [{"name": "mbdsc_test", "image": "bedrock:latest"}]
+    manager = McbdscDockerManager(pymcbdsc_root_dir=root_dir, containers_param=containers_params)
+    manager.factory_containers()[0].start()
+
+
 def parse_args() -> Namespace:
     """ 引数の定義と、解析を行う関数。
 
@@ -120,6 +127,10 @@ def parse_args() -> Namespace:
                                           help="TODO")
     subcmd_create.set_defaults(func=create)
 
+    subcmd_start = subparsers.add_parser("start", parents=[common_parser],
+                                         help="TODO")
+    subcmd_start.set_defaults(func=start)
+
     # 以下、ヘルプコマンドの定義。
 
     # "help" 以外の subcommand のリストを保持する。
@@ -147,7 +158,7 @@ def main():
     if args.debug:
         logger.info("Set log level to DEBUG.")
         logger.setLevel(DEBUG)
-    if args.subcommand in ["install", "download", "build", "create"]:
+    if args.subcommand in ["install", "download", "build", "create", "start"]:
         dl = McbdscDownloader(pymcbdsc_root_dir=args.root_dir, agree_to_meula_and_pp=args.i_agree_to_meula_and_pp)
         args.func(args, dl)
     else:
