@@ -11,9 +11,10 @@ from os import listdir
 # >>> p = mock.patch('pymcbdsc.os_name', os_name)
 from os import name as os_name
 from logging import getLogger
+from .version import version
 
 
-__version__ = "0.3.0"
+__version__ = version
 
 logger = getLogger(__name__)
 bds_version_pat = "[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+"
@@ -438,17 +439,17 @@ class McbdscDockerManager(object):
         例えば 1.16 のマイナーバージョンの Docker Image を使用するように指定されたコンテナは、
         1.16 の最新バージョンで動作し続けますが、バージョン 1.17 以上に更新されることはありません。
         """
-        versions = self.get_bds_versions_from_container_image(sort=True, reverse=False)
+        bds_versions = self.get_bds_versions_from_container_image(sort=True, reverse=False)
         # マイナーバージョンと、その最新パッチ(またはリビジョン)の組み合わせを作る。
         d = {}
-        for version in versions:
+        for bds_version in bds_versions:
             # version が "1.2.3.4" なら major_minor には "1.2" が入る。
-            major_minor = ".".join(version.split(".")[0:2])
+            major_minor = ".".join(bds_version.split(".")[0:2])
             # versions は昇順なので、特に条件式を入れなくても
             # マイナーバージョンとその最新パッチ(またはリビジョン)の組み合わせになる。
-            d[major_minor] = version
-        for (major_minor, version) in d.items():
-            self.set_tag(version=version, tag=major_minor)
+            d[major_minor] = bds_version
+        for (major_minor, bds_version) in d.items():
+            self.set_tag(version=bds_version, tag=major_minor)
 
     def get_bds_versions_from_container_image(self, sort=True, reverse=False) -> List[str]:
         images = self.list_images()
