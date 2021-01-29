@@ -34,9 +34,12 @@ class McbdscDownloader(object):
 
     Examples:
 
+        >>> import os
         >>> from pymcbdsc import McbdscDownloader
         >>>
         >>> downloader = McbdscDownloader()
+        >>> os.makedirs(downloader.download_dir(), exist_ok=True)  # ダウンロード先ディレクトリを作成。
+        >>>
         >>> # You have to agree to the Minecraft End User License Agreement and Privacy Policy.
         >>> # See also:
         >>> #     * Minecraft End User License Agreement : https://account.mojang.com/terms
@@ -342,7 +345,9 @@ class McbdscDockerManager(object):
                     # コンテナが未作成であれば作成。
                     container = dc_containers.create(**container_param)
                 # start 時に処理が停止してしまうため、 detach オプションを強制的に有効。
-                container_param["detach"] = True
+                # container_param["detach"] = True
+                container_param["stdin_open"] = True
+                container_param["tty"] = True
                 mcbdsc_container = McbdscDockerContainer(name=name, container=container)
                 mcbdsc_containers.append(mcbdsc_container)
             self._containers = mcbdsc_containers
@@ -515,6 +520,16 @@ class McbdscDockerManager(object):
         else:
             return None
 
+    def backup(self):
+        client = self._docker_client
+        containers = self.factory_containers()
+        params = {'stdin': 1, 'stream': 1}
+        for container in containers:
+            s = client.api.attach_socket(container._container.name, params=params)
+            logger.info("send command: save hold")
+            s.send("save hold\n".encode('utf-8'))
+            s.close()
+
 
 class McbdscDockerContainer(object):
     """[summary]
@@ -546,7 +561,18 @@ class McbdscDockerContainer(object):
         container.stats(**kwargs)
 
     def backup(self, online=False):
-        pass
+        """container = client.api.create_container(
+    image="debian",
+    command="cat",
+    stdin_open=True)
+client.api.start(container)
+s = client.api.attach_socket(container, params={'stdin': 1, 'stream': 1})
+s._sock.send("Hello, world! This is on stdin!")
+s.close()"""
+        container = self._container
+        s = container.attach_socket(stdin=True, stream=True)
+        s._sock.send("save hold")
+        s.close()
 
     def restore(self):
         pass
