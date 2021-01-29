@@ -41,6 +41,7 @@ def requires(args: Namespace) -> bool:
     else:
         with open(output, "w") as f:
             f.write(requires)
+    return True
 
 
 def parse_args() -> Namespace:
