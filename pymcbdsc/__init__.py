@@ -8,6 +8,7 @@ import os.path
 from os import listdir
 from logging import getLogger
 from .constants import version
+from .exceptions import FailureAgreeMeulaAndPpError
 from .utils import pymcbdsc_root_dir
 
 
@@ -244,18 +245,6 @@ class McbdscDownloader(object):
         """
         if not self.has_latest_version_zip_file():
             self.download_latest_version_zip_file(agree_to_meula_and_pp=agree_to_meula_and_pp)
-
-
-class FailureAgreeMeulaAndPpError(Exception):
-    """ MEULA と Privacy Policy への未同意であることを示す例外。
-
-    Minecraft Bedrock Edition のサーバをダウンロードする為には、 MEULA と Privacy Policy に同意する必要がありますが、
-    同意せずにダウンロードしようとした場合にこの例外が Raise します。
-
-    TODO:
-        例外のメッセージに、 MEULA 及び Privacy Policy への同意が必要であるということがわかりやすいメッセージを追加する。
-    """
-    pass
 
 
 class McbdscDockerManager(object):
