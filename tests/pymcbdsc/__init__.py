@@ -22,12 +22,13 @@ def stop_patcher(patcher, patcher_name=None):
     Python3.5, 3.6, 3.7 では、既に `stop()` をコールした patch で再度 `stop()` をコールすると
     次のような Exception が Raise されてしまうので、その対処を行う。
 
-    >>> patcher = mock.patch('hoge')
-    >>> patcher.start()
-    >>> patcher.stop()
-    >>> patcher.stop()  # すでに `stop()` をコールした patch で再度 `stop()` をコールする。
+    >>> patcher = mock.patch('pymcbdsc.requests')
+    >>> mock_requests = patcher.start()
+    >>> patcher.stop()  # doctest: +SKIP
+    >>> # すでに `stop()` をコールした patch で再度 `stop()` をコールする。
+    >>> patcher.stop()  # doctest: +SKIP
     Traceback (most recent call last):
-    ...snip...
+    ...
     RuntimeError: stop called on unstarted patcher
 
     一度 `stop()` をコールした patch からは "is_local" 属性がなくなるので、 "is_local" 属性の有無で
