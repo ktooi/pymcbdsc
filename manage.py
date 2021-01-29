@@ -29,6 +29,13 @@ def vercheck(args: Namespace) -> bool:
     return act_version == version
 
 
+def requires(args: Namespace) -> bool:
+    import configparser
+    cini = configparser.ConfigParser()
+    cini.read(args.setupcfg, encoding=args.encoding)
+    print(cini['options']['install_requires'])
+
+
 def parse_args() -> Namespace:
     parser = ArgumentParser()
     subparsers = parser.add_subparsers()
@@ -42,6 +49,11 @@ def parse_args() -> Namespace:
     subcmd_vercheck_ver_grp.add_argument("-V", "--version", dest="version", type=str)
     subcmd_vercheck_ver_grp.add_argument("-e", "--environment", dest="environment", type=str)
     subcmd_vercheck.set_defaults(func=vercheck)
+
+    subcmd_req = subparsers.add_parser('requires')
+    subcmd_req.add_argument("-s", "--setupcfg", dest="setupcfg", type=str, default="setup.cfg")
+    subcmd_req.add_argument("-e", "--encoding", dest="encoding", type=str, default="utf-8")
+    subcmd_req.set_defaults(func=requires)
 
     return parser.parse_args()
 
