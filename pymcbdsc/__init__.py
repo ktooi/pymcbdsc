@@ -6,12 +6,9 @@ import requests
 import re
 import os.path
 from os import listdir
-# To can mock the os.name like below line:
-# >>> os_name = "posix"
-# >>> p = mock.patch('pymcbdsc.os_name', os_name)
-from os import name as os_name
 from logging import getLogger
 from .constants import version
+from .utils import pymcbdsc_root_dir
 
 
 __version__ = version
@@ -19,31 +16,6 @@ __version__ = version
 logger = getLogger(__name__)
 bds_version_pat = "[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+"
 bds_zip_file_pat = "bedrock-server-({version_pat})\\.zip".format(version_pat=bds_version_pat)
-
-
-def pymcbdsc_root_dir():
-    """ pymcbdsc が利用するディレクトリ(フォルダ)の OS 毎のデフォルトパスを戻す関数。
-
-    The function returns the default root directory of pymcbdsc each by OS.
-
-    Returns:
-        str: pymcbdsc が利用するディレクトリ(フォルダ)の OS 毎のデフォルトパス。
-
-    Examples:
-
-        >>> import pymcbdsc
-        >>>
-        >>> pymcbdsc.pymcbdsc_root_dir()
-        '/var/lib/pymcbdsc'
-    """
-    r = None
-    if os_name == 'nt':
-        r = "c:\\pymcbdsc"
-    elif os_name == 'posix':
-        r = "/var/lib/pymcbdsc"
-    else:
-        r = "/var/lib/pymcbdsc"
-    return r
 
 
 class McbdscDownloader(object):
