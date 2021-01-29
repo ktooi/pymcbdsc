@@ -42,7 +42,7 @@ class McbdscDownloader(object):
         >>> #     * Minecraft End User License Agreement : https://account.mojang.com/terms
         >>> #     * Privacy Policy : https://privacy.microsoft.com/en-us/privacystatement
         >>> downloader.download_latest_version_zip_file_if_needed(agree_to_meula_and_pp=True)
-        >>> downloader.latest_version_zip_filepath()
+        >>> downloader.latest_version_zip_filepath()  # doctest: +SKIP
         '/var/lib/pymcbdsc/downloads/bedrock-server-1.16.201.02.zip'
     """
 
@@ -77,7 +77,10 @@ class McbdscDownloader(object):
 
         Examples:
 
-            >>> downloader.zip_url()
+            >>> from pymcbdsc import McbdscDownloader
+            >>>
+            >>> downloader = McbdscDownloader()
+            >>> downloader.zip_url()  # doctest: +SKIP
             'https://minecraft.azureedge.net/bin-linux/bedrock-server-1.16.201.02.zip'
         """
         if not hasattr(self, "_zip_url"):
@@ -104,7 +107,10 @@ class McbdscDownloader(object):
 
         Examples:
 
-            >>> downloader.latest_version()
+            >>> from pymcbdsc import McbdscDownloader
+            >>>
+            >>> downloader = McbdscDownloader()
+            >>> downloader.latest_version()  # doctest: +SKIP
             '1.16.201.02'
         """
         if not hasattr(self, "_latest_version"):
@@ -121,7 +127,10 @@ class McbdscDownloader(object):
 
         Examples:
 
-            >>> downloader.latest_filename()
+            >>> from pymcbdsc import McbdscDownloader
+            >>>
+            >>> downloader = McbdscDownloader()
+            >>> downloader.latest_filename()  # doctest: +SKIP
             'bedrock-server-1.16.201.02.zip'
         """
         if not hasattr(self, "_latest_filename"):
@@ -142,7 +151,10 @@ class McbdscDownloader(object):
 
         Examples:
 
-            >>> downloader.download_dir()
+            >>> from pymcbdsc import McbdscDownloader
+            >>>
+            >>> downloader = McbdscDownloader()
+            >>> downloader.download_dir()  # doctest: +SKIP
             '/var/lib/pymcbdsc/downloads'
             >>>
             >>> downloader.download_dir(relative=True)
@@ -165,7 +177,10 @@ class McbdscDownloader(object):
 
         Examples:
 
-            >>> downloader.root_dir()
+            >>> from pymcbdsc import McbdscDownloader
+            >>>
+            >>> downloader = McbdscDownloader()
+            >>> downloader.root_dir()  # doctest: +SKIP
             '/var/lib/pymcbdsc'
         """
         return self._pymcbdsc_root_dir
@@ -180,7 +195,10 @@ class McbdscDownloader(object):
 
         Examples:
 
-            >>> downloader.latest_filepath()
+            >>> from pymcbdsc import McbdscDownloader
+            >>>
+            >>> downloader = McbdscDownloader()
+            >>> downloader.latest_version_zip_filepath()  # doctest: +SKIP
             '/var/lib/pymcbdsc/downloads/bedrock-server-1.16.201.02.zip'
         """
         download_dir = self.download_dir()
@@ -197,7 +215,10 @@ class McbdscDownloader(object):
 
         Examples:
 
-            >>> downloader.has_latest_version_zip_file()
+            >>> from pymcbdsc import McbdscDownloader
+            >>>
+            >>> downloader = McbdscDownloader()
+            >>> downloader.has_latest_version_zip_file()  # doctest: +SKIP
             False
         """
         return os.path.exists(self.latest_version_zip_filepath())
@@ -466,21 +487,15 @@ class McbdscDockerManager(object):
             >>> from pymcbdsc import McbdscDockerManager
             >>>
             >>> versions = [
-            >>>     '1.2.3.4',
-            >>>     '1.1.1.1',
-            >>>     '4.3.2.1',
-            >>>     '1.10.3.4',
-            >>>     '1.10.3.05'
-            >>> ]
+            ...     '1.2.3.4',
+            ...     '1.1.1.1',
+            ...     '4.3.2.1',
+            ...     '1.10.3.4',
+            ...     '1.10.3.05'
+            ... ]
             >>> McbdscDockerManager.sort_bds_versions(versions=versions)
             >>> versions
-            [
-                '1.1.1.1',
-                '1.2.3.4',
-                '1.10.3.4',
-                '1.10.3.05',
-                '4.3.2.1'
-            ]
+            ['1.1.1.1', '1.2.3.4', '1.10.3.4', '1.10.3.05', '4.3.2.1']
 
         See Also:
             https://stackoverflow.com/questions/2574080/sorting-a-list-of-dot-separated-numbers-like-software-versions/2574090
