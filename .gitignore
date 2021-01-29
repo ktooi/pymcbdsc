@@ -1,3 +1,7 @@
+# This file is created by the following command:
+# python manage.py requires -o requirements.txt
+requirements.txt
+
 # Created by https://www.toptal.com/developers/gitignore/api/python,vim,vscode
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,vim,vscode
 
