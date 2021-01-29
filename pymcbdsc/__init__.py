@@ -38,13 +38,14 @@ class McbdscDownloader(object):
         >>> from pymcbdsc import McbdscDownloader
         >>>
         >>> downloader = McbdscDownloader()
-        >>> os.makedirs(downloader.download_dir(), exist_ok=True)  # ダウンロード先ディレクトリを作成。
+        >>> # ダウンロード先ディレクトリを作成。
+        >>> os.makedirs(downloader.download_dir(), exist_ok=True)  # doctest: +SKIP
         >>>
         >>> # You have to agree to the Minecraft End User License Agreement and Privacy Policy.
         >>> # See also:
         >>> #     * Minecraft End User License Agreement : https://account.mojang.com/terms
         >>> #     * Privacy Policy : https://privacy.microsoft.com/en-us/privacystatement
-        >>> downloader.download_latest_version_zip_file_if_needed(agree_to_meula_and_pp=True)
+        >>> downloader.download_latest_version_zip_file_if_needed(agree_to_meula_and_pp=True) # doctest: +SKIP
         >>> downloader.latest_version_zip_filepath()  # doctest: +SKIP
         '/var/lib/pymcbdsc/downloads/bedrock-server-1.16.201.02.zip'
     """
