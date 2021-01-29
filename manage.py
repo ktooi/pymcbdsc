@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
+import sys
 import unittest
 from logging import basicConfig, getLogger, INFO
 from argparse import ArgumentParser, Namespace
@@ -33,7 +34,13 @@ def requires(args: Namespace) -> bool:
     import configparser
     cini = configparser.ConfigParser()
     cini.read(args.setupcfg, encoding=args.encoding)
-    print(cini['options']['install_requires'])
+    output = args.output
+    requires = cini['options']['install_requires']
+    if output is None or output == "-":
+        sys.stdout.write(requires)
+    else:
+        with open(output, "w") as f:
+            f.write(requires)
 
 
 def parse_args() -> Namespace:
@@ -53,6 +60,7 @@ def parse_args() -> Namespace:
     subcmd_req = subparsers.add_parser('requires')
     subcmd_req.add_argument("-s", "--setupcfg", dest="setupcfg", type=str, default="setup.cfg")
     subcmd_req.add_argument("-e", "--encoding", dest="encoding", type=str, default="utf-8")
+    subcmd_req.add_argument("-o", "--output", dest="output", type=str)
     subcmd_req.set_defaults(func=requires)
 
     return parser.parse_args()
