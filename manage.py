@@ -22,7 +22,7 @@ def test(args: Namespace) -> bool:
 
 def vercheck(args: Namespace) -> bool:
     version = os.environ[args.environment] if args.environment else args.version
-    from pymcbdsc.version import version as pymcbdsc_version
+    from pymcbdsc.constants import version as pymcbdsc_version
     act_version = "v{version}".format(version=pymcbdsc_version)
     logger.info("Pymcbdsc version: {act_version}, Provided version: {exp_version}"
                 .format(act_version=act_version, exp_version=version))

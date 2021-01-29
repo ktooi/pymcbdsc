@@ -11,7 +11,7 @@ from os import listdir
 # >>> p = mock.patch('pymcbdsc.os_name', os_name)
 from os import name as os_name
 from logging import getLogger
-from .version import version
+from .constants import version
 
 
 __version__ = version
