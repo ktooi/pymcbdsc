@@ -16,6 +16,17 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Generate requirements.txt
+        run: python manage.py requires -o requirements.txt
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        env:
+          cache-name: python-${{ matrix.python-version }}
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ env.cache-name }}-${{ hashFiles('requirements.txt')}}
+          restore-keys: |
+            ${{ runner.os }}-pip-${{ env.cache-name }}-
       # pip と pytest をインストールする
       - name: Install dependencies
         run: |
