@@ -16,6 +16,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+      # requirements.txt を生成する
       - name: Generate requirements.txt
         run: python manage.py requires -o requirements.txt
       - name: Cache dependencies
