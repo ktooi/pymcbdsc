@@ -11,7 +11,8 @@ import sys
 import shutil
 from logging import basicConfig, getLogger, DEBUG, INFO
 from argparse import ArgumentParser, Namespace
-from pymcbdsc import McbdscDownloader, McbdscDockerManager, pymcbdsc_root_dir
+from pymcbdsc import McbdscDownloader, McbdscDockerManager
+from pymcbdsc.utils import pymcbdsc_root_dir
 
 
 # これはメインのファイルにのみ書く
@@ -87,6 +88,7 @@ def start(args: Namespace, downloader: McbdscDownloader) -> None:
     containers_params = [{"name": "mbdsc_test", "image": "bedrock:latest"}]
     manager = McbdscDockerManager(pymcbdsc_root_dir=root_dir, containers_param=containers_params)
     manager.factory_containers()[0].start()
+    manager.backup()
 
 
 def parse_args() -> Namespace:
