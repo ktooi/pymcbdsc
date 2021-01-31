@@ -5,7 +5,8 @@ import pymcbdsc
 
 # os.name で取得できる OS の名前と、各 OS のデフォルトとなる pymbdsc_root_dir のデフォルト値のペア。
 os_name2root_dir = {"posix": "/var/lib/pymcbdsc",
-                    "nt": "c:\\pymcbdsc"}
+                    "nt": "c:\\pymcbdsc",
+                    "OTHERS": "/var/lib/pymcbdsc"}  # OTHERS は posix でも nt でもない OS.
 # os.name で取得できる OS の名前と、各 OS でのテストケース実行時に利用するテスト用ディレクトリパスのペア。
 os_name2test_root_dir = {"posix": "/tmp/test/pymcbdsc",
                          "nt": "c:\\test\\pymcbdsc"}
