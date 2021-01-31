@@ -16,7 +16,7 @@ class TestMcbdscDockerManager(unittest.TestCase):
         test_dir = os_name2test_root_dir[os.name]
         os.makedirs(test_dir, exist_ok=True)
         self.test_dir = test_dir
-        self.patcher_docker = mock.patch('pymcbdsc.docker')
+        self.patcher_docker = mock.patch('pymcbdsc.docker.docker')
         self.mock_docker = self.patcher_docker.start()
         self.manager = pymcbdsc.McbdscDockerManager(pymcbdsc_root_dir=test_dir, containers_param=[])
 
