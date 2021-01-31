@@ -1,8 +1,8 @@
 
+from typing import Optional
 import unittest
 from unittest import mock
 import os
-import re
 import shutil
 import pymcbdsc
 # os_name2root_dir: os.name で取得できる OS の名前と、各 OS のデフォルトとなる pymbdsc_root_dir のデフォルト値のペア。
@@ -12,6 +12,12 @@ from . import stop_patcher, create_empty_files
 
 
 class TestMcbdscDownloader(unittest.TestCase):
+
+    mocked_response_bds_ver = "9.99.999.99"
+    mocked_response_bds_file = "bedrock-server-{bds_ver}.zip".format(bds_ver=mocked_response_bds_ver)
+    mocked_response_url = ("https://minecraft.azureedge.net/bin-linux/{bds_file}"
+                           .format(bds_file=mocked_response_bds_file))
+    mocked_response_content = b'TEST FILE'
 
     def setUp(self) -> None:
         test_dir = os_name2test_root_dir[os.name]
@@ -23,7 +29,7 @@ class TestMcbdscDownloader(unittest.TestCase):
 
     def tearDown(self) -> None:
         stop_patcher(self.patcher_requests)
-        shutil.rmtree(os_name2test_root_dir[os.name])
+        shutil.rmtree(self.test_dir)
         if hasattr(self, "_response"):
             # response モックが生成されていたら、削除する。
             delattr(self, "_response")
@@ -39,7 +45,7 @@ class TestMcbdscDownloader(unittest.TestCase):
             self._response = response
         return self._response
 
-    def _set_dummy_attr(self, mcbdsc=None) -> None:
+    def _set_dummy_attr(self, mcbdsc: Optional[pymcbdsc.McbdscDownloader] = None) -> None:
         if mcbdsc is None:
             mcbdsc = self.mcbdsc
 
@@ -49,15 +55,16 @@ class TestMcbdscDownloader(unittest.TestCase):
     def _set_dummy_url_response(self) -> None:
         response = self.response
         text = mock.PropertyMock()
-        text.return_value = ('<a href="https://minecraft.azureedge.net/bin-linux/bedrock-server-9.99.999.99.zip"'
+        text.return_value = ('<a href="{url}"'
                              ' class="btn btn-disabled-outline mt-4 downloadlink" role="button"'
-                             ' data-platform="serverBedrockLinux" tabindex="-1">Download </a>')
+                             ' data-platform="serverBedrockLinux" tabindex="-1">Download </a>'
+                             .format(url=self.mocked_response_url))
         type(response).text = text
 
     def _set_dummy_file_response(self, response=None) -> None:
         response = self.response
         content = mock.PropertyMock()
-        content.return_value = b'TEST FILE'
+        content.return_value = self.mocked_response_content
         type(response).content = content
 
     # 以下、テストメソッドの定義。
@@ -100,20 +107,20 @@ class TestMcbdscDownloader(unittest.TestCase):
 
         self._set_dummy_url_response()
 
+        # mock 済み response に含まれる url が戻されることを確認。
         act = mcbdsc.zip_url()
-        exp = re.match("https?://.*[^/]/bedrock-server-([0-9.]+)+\\.zip", act)
-        self.assertIsNotNone(exp)
-        self.assertIsNotNone(mcbdsc._zip_url)
-        self.assertIsNotNone(mcbdsc._latest_version)
+        exp = self.mocked_response_url
+        self.assertEqual(act, exp)
 
     def test_latest_version(self) -> None:
         mcbdsc = self.mcbdsc
 
         self._set_dummy_url_response()
 
+        # mock 済み response に含まれるバージョンが戻されることを確認。
         act = mcbdsc.latest_version()
-        exp = re.match("([0-9.]+)", act)
-        self.assertIsNotNone(exp)
+        exp = self.mocked_response_bds_ver
+        self.assertEqual(act, exp)
 
     def test_latest_filename(self) -> None:
         mcbdsc = self.mcbdsc
