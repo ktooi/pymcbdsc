@@ -24,6 +24,43 @@ class TestMcbdscDownloader(unittest.TestCase):
     def tearDown(self) -> None:
         stop_patcher(self.patcher_requests)
         shutil.rmtree(os_name2test_root_dir[os.name])
+        if hasattr(self, "_response"):
+            # response モックが生成されていたら、削除する。
+            delattr(self, "_response")
+
+    # 以下、テスト用サポートメソッドの定義。
+
+    @property
+    def response(self):
+        # requests.get() の戻り値をモックする MagicMock を戻すメソッド。
+        if not hasattr(self, "_response"):
+            response = mock.MagicMock()
+            self.mock_requests.get.return_value = response
+            self._response = response
+        return self._response
+
+    def _set_dummy_attr(self, mcbdsc=None) -> None:
+        if mcbdsc is None:
+            mcbdsc = self.mcbdsc
+
+        mcbdsc._zip_url = "https://example.com/bedrock-server-1.0.0.0.zip"
+        mcbdsc._latest_version = "1.0.0.0"
+
+    def _set_dummy_url_response(self) -> None:
+        response = self.response
+        text = mock.PropertyMock()
+        text.return_value = ('<a href="https://minecraft.azureedge.net/bin-linux/bedrock-server-9.99.999.99.zip"'
+                             ' class="btn btn-disabled-outline mt-4 downloadlink" role="button"'
+                             ' data-platform="serverBedrockLinux" tabindex="-1">Download </a>')
+        type(response).text = text
+
+    def _set_dummy_file_response(self, response=None) -> None:
+        response = self.response
+        content = mock.PropertyMock()
+        content.return_value = b'TEST FILE'
+        type(response).content = content
+
+    # 以下、テストメソッドの定義。
 
     def test_root_dir(self) -> None:
         # __init__() での初期値を試験。
@@ -58,18 +95,10 @@ class TestMcbdscDownloader(unittest.TestCase):
         exp = "downloads"
         self.assertEqual(act, exp)
 
-    def _set_dummy_attr(self, mcbdsc=None) -> None:
-        if mcbdsc is None:
-            mcbdsc = self.mcbdsc
-
-        mcbdsc._zip_url = "https://example.com/bedrock-server-1.0.0.0.zip"
-        mcbdsc._latest_version = "1.0.0.0"
-
     def test_zip_url(self) -> None:
         mcbdsc = self.mcbdsc
 
-        # 実際にリクエストを飛ばした際の挙動を確認する為、 requests のパッチを停止する。
-        self.patcher_requests.stop()
+        self._set_dummy_url_response()
 
         act = mcbdsc.zip_url()
         exp = re.match("https?://.*[^/]/bedrock-server-([0-9.]+)+\\.zip", act)
@@ -80,8 +109,7 @@ class TestMcbdscDownloader(unittest.TestCase):
     def test_latest_version(self) -> None:
         mcbdsc = self.mcbdsc
 
-        # 実際にリクエストを飛ばした際の挙動を確認する為、 requests のパッチを停止する。
-        self.patcher_requests.stop()
+        self._set_dummy_url_response()
 
         act = mcbdsc.latest_version()
         exp = re.match("([0-9.]+)", act)
