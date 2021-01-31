@@ -1,4 +1,3 @@
-
 from typing import Optional
 import unittest
 from unittest import mock
@@ -25,7 +24,7 @@ class TestMcbdscDownloader(unittest.TestCase):
         self.test_dir = test_dir
         self.patcher_requests = mock.patch('pymcbdsc.downloader.requests')
         self.mock_requests = self.patcher_requests.start()
-        self.mcbdsc = pymcbdsc.McbdscDownloader(pymcbdsc_root_dir=test_dir)
+        self.mcbdsc = self.gen_downloader()
 
     def tearDown(self) -> None:
         stop_patcher(self.patcher_requests)
@@ -44,6 +43,10 @@ class TestMcbdscDownloader(unittest.TestCase):
             self.mock_requests.get.return_value = response
             self._response = response
         return self._response
+
+    def gen_downloader(self, **kwargs) -> pymcbdsc.McbdscDownloader:
+        test_dir = self.test_dir
+        return pymcbdsc.McbdscDownloader(pymcbdsc_root_dir=test_dir, **kwargs)
 
     def _set_dummy_attr(self, mcbdsc: Optional[pymcbdsc.McbdscDownloader] = None) -> None:
         if mcbdsc is None:
@@ -165,10 +168,92 @@ class TestMcbdscDownloader(unittest.TestCase):
         self.assertEqual(act, exp)
 
     def test_download(self) -> None:
-        pass
+        mcbdsc = self.mcbdsc
+
+        self._set_dummy_file_response()
+
+        # 指定した URL の内容がファイルとして保存されることを確認する。
+        testurl = "https://example.com/dummy_file"
+        testfile = os.path.join(self.test_dir, "download_test")
+        mcbdsc.download(url=testurl, filepath=testfile)
+        # testurl を get しているか確認する。
+        act = self.mock_requests.get.call_args
+        exp = unittest.mock.call(testurl)
+        self.assertEqual(act, exp)
+        # ファイルが意図したとおりの内容で保存されているか確認する。
+        with open(testfile, 'rb') as f:
+            act = f.read()
+        exp = self.mocked_response_content
+        self.assertEqual(act, exp)
+
+    def _test_download_latest_version_zip_file(self, mcbdsc, params) -> None:
+        os.makedirs(mcbdsc.download_dir(), exist_ok=True)
+        mcbdsc.download_latest_version_zip_file(**params)
+        # 最新のファイルパスが意図したとおりになっているか確認する。
+        act_path = mcbdsc.latest_version_zip_filepath()
+        exp_path = os.path.join(self.test_dir, "downloads", self.mocked_response_bds_file)
+        self.assertEqual(act_path, exp_path)
+        # _set_dummy_url_response により戻されたダミーの URL に対して get しているか確認する。
+        act = self.mock_requests.get.call_args
+        exp = unittest.mock.call(self.mocked_response_url)
+        self.assertEqual(act, exp)
+        # ファイルが意図したとおりの内容で保存されているか確認する。
+        with open(act_path, 'rb') as f:
+            act = f.read()
+        exp = self.mocked_response_content
+        self.assertEqual(act, exp)
 
     def test_download_latest_version_zip_file(self) -> None:
-        pass
+        mcbdsc = self.mcbdsc
+
+        # agree_to_meula_and_pp が False の場合に
+        # FailureAgreeMeulaAndPpError が Raise されることを確認する。
+        with self.assertRaises(pymcbdsc.exceptions.FailureAgreeMeulaAndPpError):
+            mcbdsc.download_latest_version_zip_file(agree_to_meula_and_pp=False)
+
+        # McbdscDownloader の初期化時に agree_to_meula_and_pp が未指定で、
+        # 且つ download_latest_version_zip_file メソッドでも未指定の場合に
+        # FailureAgreeMeulaAndPpError が Raise されることを確認する。
+        with self.assertRaises(pymcbdsc.exceptions.FailureAgreeMeulaAndPpError):
+            mcbdsc.download_latest_version_zip_file()
+
+        self._set_dummy_file_response()
+        self._set_dummy_url_response()
+        # ダウンロードディレクトリが存在しない場合に FileNotFoundError が Raise されることを確認する。
+        with self.assertRaises(FileNotFoundError):
+            mcbdsc.download_latest_version_zip_file(agree_to_meula_and_pp=True)
+
+        # agree_to_meula_and_pp が True の場合に FailureAgreeMeulaAndPpError が Raise されず、
+        # ファイルがダウンロードされることを確認する。
+        self._test_download_latest_version_zip_file(mcbdsc=mcbdsc, params={"agree_to_meula_and_pp": True})
+
+    def test_download_latest_version_zip_file_second(self) -> None:
+        mcbdsc = self.gen_downloader(agree_to_meula_and_pp=True)
+
+        # McbdscDownloader の初期化時に agree_to_meula_and_pp を True とした場合に
+        # download_latest_version_zip_file に agree_to_meula_and_pp を渡さなくても
+        # ファイルがダウンロードされることを確認する。
+
+        self._set_dummy_file_response()
+        self._set_dummy_url_response()
+        self._test_download_latest_version_zip_file(mcbdsc=mcbdsc, params={})
 
     def test_download_latest_version_zip_file_if_needed(self) -> None:
-        pass
+        mcbdsc = self.mcbdsc
+
+        self._set_dummy_url_response()
+
+        # ファイルが存在せず、 agree_to_meula_and_pp も未指定の場合に
+        # FailureAgreeMeulaAndPpError が Raise されることを確認する。
+        with self.assertRaises(pymcbdsc.exceptions.FailureAgreeMeulaAndPpError):
+            mcbdsc.download_latest_version_zip_file_if_needed()
+
+        self._set_dummy_file_response()
+        os.makedirs(mcbdsc.download_dir(), exist_ok=True)
+        mcbdsc.download_latest_version_zip_file_if_needed(agree_to_meula_and_pp=True)
+        path = os.path.join(mcbdsc.download_dir(), self.mocked_response_bds_file)
+        # ファイルが意図したとおりの内容で保存されているか確認する。
+        with open(path, 'rb') as f:
+            act = f.read()
+        exp = self.mocked_response_content
+        self.assertEqual(act, exp)
