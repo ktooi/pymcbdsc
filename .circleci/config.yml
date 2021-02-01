@@ -72,8 +72,10 @@ workflows:
           requires:
             - build
           pkg-manager: pip
-          pip-dependency-file: pymcbdsc.egg-info/requires.txt
           setup:
+            - run:
+                name: Generate requirements.txt
+                command: python manage.py requires -o requirements.txt
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
           filters:
@@ -85,8 +87,10 @@ workflows:
           requires:
             - build
           pkg-manager: pip
-          pip-dependency-file: pymcbdsc.egg-info/requires.txt
           setup:
+            - run:
+                name: Generate requirements.txt
+                command: python manage.py requires -o requirements.txt
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
           filters:
@@ -101,8 +105,10 @@ workflows:
           requires:
             - build
           pkg-manager: pip
-          pip-dependency-file: pymcbdsc.egg-info/requires.txt
           setup:
+            - run:
+                name: Generate requirements.txt
+                command: python manage.py requires -o requirements.txt
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
           filters:
@@ -117,8 +123,10 @@ workflows:
           requires:
             - build
           pkg-manager: pip
-          pip-dependency-file: pymcbdsc.egg-info/requires.txt
           setup:
+            - run:
+                name: Generate requirements.txt
+                command: python manage.py requires -o requirements.txt
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
           filters:
@@ -133,8 +141,10 @@ workflows:
           requires:
             - build
           pkg-manager: pip
-          pip-dependency-file: pymcbdsc.egg-info/requires.txt
           setup:
+            - run:
+                name: Generate requirements.txt
+                command: python manage.py requires -o requirements.txt
             - restore_cache:
                 key: v1-{{ .Branch }}-{{ .Revision }}
           filters:
