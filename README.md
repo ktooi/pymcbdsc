@@ -1,6 +1,6 @@
 # pymcbdsc
 
-[![Version](https://badge.fury.io/py/pymcbdsc.svg)](https://pypi.org/project/pymcbdsc/) [![doctest](https://github.com/ktooi/pymcbdsc/workflows/doctest/badge.svg)](https://github.com/ktooi/pymcbdsc/actions?query=workflow%3Adoctest+branch%3Amain) [![CircleCI](https://circleci.com/gh/ktooi/pymcbdsc/tree/main.svg?style=shield)](https://circleci.com/gh/ktooi/pymcbdsc/tree/main)
+[![Version](https://badge.fury.io/py/pymcbdsc.svg)](https://pypi.org/project/pymcbdsc/) [![doctest](https://github.com/ktooi/pymcbdsc/workflows/doctest/badge.svg)](https://github.com/ktooi/pymcbdsc/actions?query=workflow%3Adoctest+branch%3Amain) [![pep8](https://github.com/ktooi/pymcbdsc/workflows/pep8/badge.svg)](https://github.com/ktooi/pymcbdsc/actions?query=workflow%3Apep8+branch%3Amain) [![CircleCI](https://circleci.com/gh/ktooi/pymcbdsc/tree/main.svg?style=shield)](https://circleci.com/gh/ktooi/pymcbdsc/tree/main)
 
 Pymcbdsc(Python Minecraft Bedrock Dedicated Server Container Manager (長い...)) は、 [Bedrock Dedicated Server](https://www.minecraft.net/en-us/download/server/bedrock) (以下、 BDS)を手間をかけずに構築・運用する為のスクリプト及び Python モジュールです。
 
