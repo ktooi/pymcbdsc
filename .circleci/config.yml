@@ -31,7 +31,7 @@ jobs:
       - run:
           command: ./setup.py test
           name: Test
-  register:
+  publish:
     executor: python/default
     steps:
       - checkout
@@ -150,8 +150,8 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - register:
-          name: register
+      - publish:
+          name: publish
           requires:
             - test-py3.5
             - test-py3.6
