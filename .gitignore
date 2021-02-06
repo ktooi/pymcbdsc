@@ -2,6 +2,8 @@
 # python manage.py requires -o requirements.txt
 requirements.txt
 
+junit/
+
 # Created by https://www.toptal.com/developers/gitignore/api/python,vim,vscode
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,vim,vscode
 
