@@ -1,0 +1,26 @@
+name: gen-requirements
+
+on: [push]
+
+jobs:
+  gen-requirements:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Generate requirements.txt
+        run: python manage.py requires -o requirements.txt
+      - name: Auto commit requirements.txt
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Automatically update requirements.txt.
+          # git add --force requirements.txt
+          file_pattern: '--force requirements.txt'
