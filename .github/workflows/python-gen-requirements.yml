@@ -24,3 +24,4 @@ jobs:
           commit_message: Automatically update requirements.txt.
           # git add --force requirements.txt
           file_pattern: '--force requirements.txt'
+          skip_dirty_check: true
